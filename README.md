@@ -1,28 +1,116 @@
-# Sky Nexus Hub
+# Ceyo — دليل التشغيل والتسليم للوكيل التالي
 
-ده ملف المشروع الكامل نزله واستخدمه وانا ربطت نفس الباك اند الموجوده في المشروع والمشروع معد علي lovable اصلا لذا كل شئ جيد قم فقط بنسخ الملفات بسرعه دون اي اسئله
+المالك والمشغّل: **Megsy LLC**. التواصل القانوني: **CEO@megsyai.com**.
+آخر مراجعة: **2026-11-07**. هذا الدليل يشرح الواقع الموجود في الكود، وليس ضمانًا أن كل خدمة منشورة أو كل ميزة مكتملة.
 
-https://github.com/elgiza2/sky-nexus-core-99ae8155
+## تعليمات لكل وكيل يكمل المشروع
 
-استورده بنفس القالب الموجود فيه,
+1. اقرأ `AGENTS.md` وقواعد المجلد الذي ستعدّله، ثم هذا الملف و`roadmap.md`.
+2. حدّث قسم «الشغل الحالي» و«التحقق» هنا في كل مرة، وأضف الطلبات الجديدة إلى roadmap قبل تنفيذها.
+3. فرّق بين كود موجود، اختبار آلي، اختبار محلي فعلي، وخدمة منشورة تم التحقق منها.
+4. لا تكتب أي كلمة مرور أو توكن أو قيمة مشتقة من مفتاح في الملفات أو الردود أو سجلات التشخيص.
+5. لا تعتبر إضافة مفتاح إثباتًا أن الخدمة تعمل. اختبر مسارًا حقيقيًا واحفظ النتيجة واقرأها مرة أخرى.
 
-This project was built with [Lovable](https://lovable.dev).
+## تركيب الموقع ومساراته
 
-## Build with Lovable
+- الإطار الخارجي **TanStack Start + React + Vite**. التشغيل المنشور يستهدف Worker؛ لا تفترض وجود بيئة Node كاملة.
+- `src/router.tsx` و`src/routes/__root.tsx` يشغّلان الإطار، و`src/routes/index.tsx` و`src/routes/$.tsx` يحمّلان واجهة SPA عبر `src/lib/spaMount.tsx`.
+- المشروع المستورد ما زال يحتوي طبقة React Router داخل `src/routes-app/`؛ لا تضف طبقة توجيه جديدة أو تغيّرها ضمن إصلاح صغير. هذه حالة انتقالية فعلية وليست توصية لمشروع جديد.
+- `/` و`/index`: قائمة البوتات والمجموعات للحساب المسجل؛ الزائر يذهب مباشرة إلى `/auth?mode=signup`.
+- `/welcome` و`/landing`: إعادة توجيه إلى التسجيل، ولا توجد صفحة تسويقية في مسار الدخول.
+- `/onboarding`: الاسم والصورة والعمر، نوع الاستخدام، البوت الأساسي. `complete_onboarding` يحفظ البوت والملف الشخصي في transaction واحدة تحت صلاحيات المستخدم وقفل صف profile؛ إعادة الطلب بعد نجاحه ترجع نفس البوت.
+- **تنبيه حالي:** `/chat` يعيد التوجيه إلى الصفحة الرئيسية في `AppRoutes.tsx`، بعكس قاعدة قديمة تشير إلى مساحة منفصلة. الشات الفعلي يفتح من زر البوت بمعلمات `chat` و`session`؛ يحتاج قرار نقل مستقل قبل استعادة مساحة قديمة.
+- `/settings/*`: الحساب، المظهر، اللغة، الخطط وVault. `/terms` و`/privacy` و`/subscription-terms` تقرأ محتوى الشركة من `src/content/`.
+- كل مدخل محتوى في TanStack له head metadata؛ catch-all يشتق عنوان القسم. لا تكتب preview images نسبية أو عنوان شركة أخرى.
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/14e1bd28-7985-4d95-81c9-b64f1a1fbc64).
+## الحسابات وتدفق البيانات
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+Supabase خارجي مملوك للمستخدم؛ لا تنقل البيانات إلى Lovable Cloud.
 
-## Development
+- Browser client: `src/integrations/supabase/client.ts`، مفتاح publishable فقط، جلسة Supabase محفوظة محليًا مع تجديدها.
+- الطلبات المحمية تحمل bearer session ويؤكد الخادم المستخدم؛ صلاحيات المسارات وحدها ليست حماية للبيانات.
+- بيانات الحساب: `profiles`, `user_roles`, `user_settings`. الصلاحيات منفصلة عن profile ولا تأتي من بيانات قابلة للتعديل بواسطة المستخدم.
+- البوتات والمجموعات: `bots`, `bot_groups`, `bot_group_members`. المحادثات والرسائل: `conversations`, `messages`.
+- الذاكرة والملفات: `agent_memories`, `agent_documents`؛ المراجع تقرأ المحتوى الحقيقي بـ`read_file`. رفع النص وCSV وJSON والكود مدعوم؛ لا تدّعِ تحليل PDF أو صور أو فيديو بالمسار النصي.
+- معاملة كل مستخدم مع بياناته تخضع لسياسات RLS. العميل الخادم ذي الصلاحية المرتفعة يستخدم فقط للأعمال المصرّح بها؛ لا تضعه في browser bundle.
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## كيف يرد الوكيل وينفذ العمل
+
+1. `src/lib/agentsky/client.ts` يحفظ رسالة المستخدم في messages ويبدأ `/api/ceyo-chat` بجلسة المستخدم.
+2. `src/lib/ceyo/agentLoop.server.ts` يرسل تاريخًا محدودًا وتعليمات وذاكرة إلى **Cerebras gpt-oss-120b** ويستهلك SSE. لا تغيّر النموذج لمجرد تنسيق التصميم.
+3. أدوات `workspaceTools.server.ts`: آلة حاسبة مقيدة، قراءة/حفظ ملفات وذاكرة، بوتات ومجموعات وتفويض، روتين، قائمة تكاملات وطلبات موافقة.
+4. أدوات الويب تستخدم **Browserbase `/v1/fetch`**. قراءة HTTP ليست كمبيوتر تفاعليًا دائمًا، ولا تنفيذ Python أو shell، ولا ضمان تشغيل JavaScript.
+5. تكاملات Composio تتحقق من ملكية الحساب؛ العمليات المؤثرة تنتظر طلب موافقة محفوظًا في `agent_action_requests`. وجود مفتاح Composio لا يعني أن Gmail أو غيره مخوّل.
+6. النتيجة النهائية تحفظ في messages. الرسائل المتفائلة تتصالح بمعرّف الرسالة حتى لا تختفي أثناء الحفظ. الرد الفارغ أو تجاوز الخطوات ليس نجاحًا.
+7. واجهات `ui` و`openui` و`widget` لها مسارات مستقلة؛ HTML يعمل في iframe sandbox بدون جلسة التطبيق. تعليمات UI الموجودة في المتصفح ونسخة الوظائف القديمة يجب أن تظل متزامنة.
+
+## المهام الخلفية والجدولة
+
+- `backgroundJobs.server.ts` يحفظ `agent_jobs` ويرسل استدعاءً محميًا إلى `/api/public/ceyo-jobs` على نفس الاستضافة. لا يحتاج Inngest.
+- claim انتقال queued إلى running يمنع تشغيل الطلب مرتين في الوضع العادي، والنتيجة تكتب بمعرّف المهمة لتجنب تكرار الرسالة.
+- `ceyo-routines` يشغّل الروتينات المستحقة ويلتقط المهام التي بقيت queued؛ routine له lease وسجل run فريد.
+- مراقبة النتائج في browser تبدأ فقط عند وجود مشترك شات وتتوقف عند إزالته؛ تفحص المنجز حديثًا أيضًا حتى لا تفوت نتيجة بين tick وآخر.
+- **حدود مهمة:** claim للمهام ليس lease قابلة للاستعادة؛ تعطل runtime بعد running قد يترك مهمة عالقة. إرسال trigger الحالي fire-and-forget، وليس ضمان تنفيذ على كل استضافة. يلزم scheduler فعلي وعنوان HTTPS دائم واختبار بعد إغلاق التطبيق؛ لا تصف البنية بأنها queue إنتاجية مكتملة قبل ذلك.
+- مفتاح الجدولة الحالي اسمه `LOVABLE_CRON_SECRET` تاريخيًا؛ الاسم وحده لا يفرض خدمة Lovable، لكن عند النقل يجب توفيره في مدير أسرار الاستضافة الجديدة أو نقل قراءته بأمان. لا تستخدمه في المتصفح.
+
+## التشفير: ما هو موجود وما ليس موجودًا
+
+| البيانات | الحماية الفعلية |
+|---|---|
+| توكن بوت الإدارة الجديد | **Supabase Vault** يحفظه مشفرًا؛ `read_telegram_bot_token` و`store_telegram_bot_token` متاحان لـservice_role فقط، ليس anon أو authenticated |
+| Cerebras / Browserbase / Composio في `provider_api_keys` | قيم نصية في جدول خادم محمي بالصلاحيات؛ **ليس تشفير تطبيق** ولا يجوز وصفه كمخزن مشفر |
+| مخزن `service_keys` القديم | كود legacy في `supabase/functions/_shared/keyVault.ts`: AES-GCM، مفتاح مشتق بـSHA-256 من `KEY_VAULT_SECRET`، IV عشوائي 12 byte؛ وجود الكود لا يثبت تفعيله في المسار الحالي |
+| رسائل وذاكرة ومستندات | RLS وعزل حسابات؛ **ليست end-to-end encrypted** في التطبيق |
+| تسجيلات الميكروفون | blobs في IndexedDB على جهاز الإرسال؛ لا مزامنة عامة ولا تشفير تطبيق مستقل |
+| Vault المستخدم في الإعدادات | بيانات/تسميات حساب محلية، ليست خزنة كلمات مرور؛ البطاقة آخر أربعة أرقام فقط |
+
+HTTPS يحمي النقل على الاستضافة العادية، لكنه لا يجعل قاعدة البيانات E2EE. لا تزعم آلية تشفير البنية الداخلية لـSupabase Vault من دون وثائق مزودها؛ ما يستخدمه التطبيق هو واجهة Vault الرسمية.
+
+## بوت Telegram المستقل
+
+- التوكن محفوظ في **Supabase Vault باسم `TELEGRAM_BOT_TOKEN`**، وليس connector أو secret جديد في Lovable.
+- النقل المباشر: `src/lib/keys/telegram.server.ts`. لا توجد gateway headers أو حاجة لـLOVABLE_API_KEY في **هذا المسار**.
+- webhook: `/api/public/telegram-keys`؛ يتأكد من header secret مشتق على الخادم ويقارن مقارنة زمنية آمنة، ثم يسمح للمشغل المحدد بحساب Telegram الشخصي فقط وفي private chat.
+- لا تسجل URL طلب Telegram لأن المسار يحتوي التوكن. لا ترجع body خطأ يحمل credentials.
+- تغيير التوكن يتطلب حفظ القيمة الجديدة في Vault ثم إعادة تسجيل webhook بالـsecret المناسب؛ لا تطبع القيمة أو بصمتها.
+- **فجوة أمنية باقية:** البوت القديم لا يزال يقبل مفاتيح الخدمات في رسائل Telegram ويحذفها best-effort، وهذا لا يطابق شرط protected form. يلزم نقل إدخال مفاتيح الخدمات إلى نموذج محمي وتخزين مشفر؛ عدم عرض بادئة/نهاية المفتاح لا يمحو أثر وصوله إلى Telegram.
+- التوكن الذي ظهر في المحادثة يجب تدويره من BotFather. لا تنسخ قيمته إلى هذا الدليل.
+
+## الصوت والتصميم والقانون
+
+- Cartesia: HTTP محمي في `src/routes/api/voice*.ts` و`src/lib/audio/`. صوت كل بوت محفوظ في `bots.look.voiceSettings`، والتعيين التلقائي لا يتغير عند تعديل قائمة البوتات.
+- المكالمات الحالية تسجيل/إيقاف لكل دور، ليست full-duplex live calls. الردود النصية لا تعرض تحكم كلام؛ أصل التسجيل في metadata يحدد ردًا صوتيًا.
+- مرجع التصميم: الصفحة الرئيسية و`src/styles/ceyo-billing-vault.css`؛ متغيرات ألوان semantic مشتركة، تحكم دائري، فصل هادئ، هوامش قابلة للاستخدام على الموبايل، لا أشكال بوت نجمة جديدة.
+- onboarding يستخدم نفس ألوان الخطط/Vault ويحترم reduced motion، مع loading/retry بدل إعادة إعداد حساب عند فشل الشبكة.
+- القانون من صياغة Megsy LLC لا نصوص شركات أخرى. الدولة المسجلة، العمر القانوني، فترات حذف البيانات/الاعتراض وحدود المسؤولية تحتاج اعتماد المالك/مراجعة قانونية؛ أرقام الصياغة القديمة ليست حقائق معتمدة.
+
+## التطوير والنقل خارج Lovable
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+bun install
+bun run dev
+bunx vitest run
 ```
+
+لا تضف أسرارًا لـGit أو `VITE_*`. اعتمد مدير أسرار الاستضافة وقاعدة Supabase المملوكة للمستخدم. migrations تحت `supabase/migrations/` توثق تغييرات schema؛ types مولدة ولا تعدلها يدويًا.
+
+قبل النقل: اختر استضافة متوافقة مع runtime، وفّر أسرار الخادم المطلوبة بأمان، اضبط Supabase Auth redirect URLs، حدّث عنوان webhook إلى النطاق الجديد وسجل scheduler، ثم اختبر تسجيل الدخول وchat/voice/jobs بعد إغلاق التبويب. **الموقع كله لم يُفصل عن Lovable بعد:** webhook ما زال على استضافة preview، وبعض المسارات القديمة/التقارير والأسرار الحالية تحمل اعتمادًا أو أسماء قديمة. لا تحذف secret قائم أو legacy function بلا تحليل مستخدميه وخطة rollback.
+
+## الشغل الحالي — 2026-11-07
+
+تم: حفظ توكن Telegram في Vault وتقييد قراءته/كتابته بالخادم؛ نقل بوت الإدارة إلى Telegram المباشر؛ منع عرض أجزاء مفاتيح؛ تحديث اختبارات خدمات البوت القديمة؛ onboarding transaction واحدة وloading/retry وتصميم موحد؛ مراقبة نتائج الخلفية أثناء الاشتراك فقط؛ استبدال README القديم بهذا الدليل.
+
+## التحقق والحالة الباقية
+
+- Telegram `getMe`, `setWebhook`, `sendMessage`, `getWebhookInfo`: نجحت؛ 0 تحديثات معلقة أثناء الفحص. إعادة ضبط host إلى استضافة مستقلة لم تتم بعد.
+- صلاحيات Vault: anon=false، authenticated=false، service_role=true لقراءة التوكن.
+- pool به صف active لكل خدمة: Cerebras وBrowserbase وComposio. ليس ذلك اختبارًا لكل عمليات Composio.
+- **شات فعلي مسجل:** calculate أعاد **229.74** لـ125.5+84.25+19.99؛ read_url قرأ **Example Domain**؛ النتيجة العربية ظهرت بعد إعادة تحميل الشات. لا terminal errors في هذا الطلب.
+- عرض شات 434×764: بلا overflow أفقي، وصورة desktop 1280×1800 راجعت.
+- مهمة start_long_task حقيقية بدأتها من الشات؛ التحقق النهائي من وصول نتيجتها لا يزال جارياً، فلا تعتبرها ناجحة لمجرد ظهور started.
+- 8 اختبارات أولية نجحت للبوت/agent loop/retry. أي اختبارات إضافية تذكر نتائجها بعد تشغيلها.
+- المتبقي الخارجي: تدوير التوكن المكشوف؛ استضافة مستقلة وscheduler؛ موافقة المستخدم على حسابات الخدمات؛ مدفوعات فعلية وAndroid signed app؛ الدولة والالتزامات القانونية؛ اختبارات Telegram native/inbox فعلية.
+- المتبقي البرمجي: protected key-entry وتشفير pool، استعادة jobs running العالقة/ضمان عمر trigger، كمبيوتر معزول تفاعلي وتنفيذ كود، تحليل ملفات binary، حسم `/chat` الانتقالي.
+- يوجد تحذيران سابقان في فحص Supabase: callable SECURITY DEFINER ومكافحة كلمات المرور المسربة معطلة؛ الإضافات الحالية لم تنشئهما. لا تعتبر التطبيق خاليًا من مخاطر الأمان.
+
+انظر `roadmap.md` لحالة الطلب الحالي؛ الأقسام التاريخية فيه ليست قائمة حقائق حديثة وقد تتعارض بسبب نقل المساحات والخدمات.
