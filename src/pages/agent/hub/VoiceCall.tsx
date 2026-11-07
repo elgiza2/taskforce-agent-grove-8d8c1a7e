@@ -5,14 +5,15 @@ import type { AgentInfo } from "@/lib/agentsky/client";
 import { getSpeech, microphoneRecording, transcribeRecording } from "@/lib/audio/voiceClient";
 import { speechText } from "@/lib/audio/voiceSchema";
 import { BotAvatar, type HubLang } from "./HubParts";
-import { useVoiceChoice, VoiceChoice } from "./VoiceControls";
+import type { AgentVoiceSettings } from "@/lib/audio/agentVoice";
+import { useVoiceChoice } from "./VoiceControls";
 
 /** Turn-based calls: explicit recording, authenticated transcription and Cartesia reply. */
-export function VoiceCallBar({ agent, lang, busy, lastReply, onSay, onEnd }: {
-  agent: AgentInfo; lang: HubLang; busy: boolean; lastReply: string; onSay: (text: string) => void; onEnd: () => void;
+export function VoiceCallBar({ agent, lang, busy, lastReply, onSay, onEnd, settings, agentIds }: {
+  settings: AgentVoiceSettings; agentIds: string[]; agent: AgentInfo; lang: HubLang; busy: boolean; lastReply: string; onSay: (text: string) => void; onEnd: () => void;
 }) {
   const ar = lang === "ar";
-  const choice = useVoiceChoice(ar ? "ar" : "en");
+  const choice = useVoiceChoice(ar ? "ar" : "en", agent.id, agentIds, settings);
   const [muted, setMuted] = useState(false);
   const [phase, setPhase] = useState<"ready" | "listening" | "thinking" | "speaking">("ready");
   const [error, setError] = useState("");
@@ -73,7 +74,7 @@ export function VoiceCallBar({ agent, lang, busy, lastReply, onSay, onEnd }: {
 
   return <div className="cx-call cx-call-cartesia" role="dialog" aria-label={ar ? "مكالمة صوتية" : "Voice call"}>
     <BotAvatar agent={agent} size={44} state={phase === "speaking" ? "talking" : phase === "thinking" ? "thinking" : "idle"} />
-    <div className="cx-call-content"><VoiceChoice choice={choice} />
+    <div className="cx-call-content">
       <span role="status">{phase === "listening" ? (ar ? "جاري التسجيل" : "Recording") : phase === "thinking" ? (ar ? "جاري الرد" : "Processing") : phase === "speaking" ? (ar ? "بيتكلم" : "Speaking") : (ar ? "جاهز" : "Ready")}</span>
       {(error || choice.error) && <span role="alert">{error || choice.error}</span>}
     </div>

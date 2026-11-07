@@ -62,7 +62,7 @@
 .hub-primary-button > small > span { width: 5px; height: 5px; border-radius: 50%; background: var(--hub-online); }
 .hub-primary-skeleton { display: grid; min-height: 150px; place-items: center; color: var(--hub-muted); }
 .hub-primary-orb { --ag-eye: oklch(0.18 0.008 260); }
-.hub-primary-orb .ag-orb__body { background: linear-gradient(145deg, var(--hub-orb-light), var(--hub-orb-shade)); clip-path: polygon(50% 0%, 61% 12%, 77% 5%, 82% 23%, 100% 28%, 91% 45%, 100% 60%, 82% 68%, 81% 87%, 62% 83%, 49% 100%, 38% 84%, 19% 91%, 17% 71%, 0% 62%, 9% 45%, 1% 28%, 19% 23%, 23% 5%, 39% 12%); box-shadow: none; }
+.hub-primary-orb .ag-orb__body { background: linear-gradient(145deg, var(--hub-orb-light), var(--hub-orb-shade)); clip-path: none; border-radius: var(--look-radius); box-shadow: none; }
 .hub-bot-avatar { position: relative; display: inline-grid; flex: none; place-items: center; }
 .hub-category { margin: 0 0 18px; }
 .hub-category-title { display: flex; width: 100%; align-items: center; justify-content: space-between; padding: 7px 9px; border: 0; background: transparent; color: var(--hub-muted); font-size: 12px; cursor: pointer; }

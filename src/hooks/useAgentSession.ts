@@ -1,3 +1,4 @@
+import type { RecordingOrigin } from "@/lib/audio/agentVoice";
 /** @doc Live AgentSky session: history + SSE stream, running state, stop, and a send queue
  *  that lets the user type while the agent works (queued messages go out when it finishes). */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -71,6 +72,7 @@ export function useAgentSession(sessionId: string | null, lang: Lang) {
               retry = 0;
               if (!e.id || seen.current.has(e.id)) return;
               if (e.type === "session.status_running") setRunning(true);
+              if (e.type === "session.error") setError(typeof (e as any).message === "string" ? (e as any).message : "The agent could not reply. Your message is saved.");
               if (e.type === "session.status_idle" || e.type === "session.error") {
                 setRunning(false);
                 setStopping(false);
@@ -104,11 +106,11 @@ export function useAgentSession(sessionId: string | null, lang: Lang) {
     return () => window.removeEventListener("ceyo-action-completed", refresh);
   }, [reload]);
 
-  const sendNow = useCallback(async (text: string, images: string[] = []) => {
+  const sendNow = useCallback(async (text: string, images: string[] = [], origin: RecordingOrigin = {}) => {
     const sid = sidRef.current;
     if (!sid) return;
     const optimistic: RawEvent = {
-      id: crypto.randomUUID(), type: "user.message", at: new Date().toISOString(),
+      id: crypto.randomUUID(), type: "user.message", ...origin, at: new Date().toISOString(),
       content: [{ type: "text", text }, ...images.map((url) => ({ type: "image", source: { type: "url", url } }))],
     };
     seen.current.add(optimistic.id);
@@ -116,7 +118,7 @@ export function useAgentSession(sessionId: string | null, lang: Lang) {
     setError(null);
     setRunning(true);
     try {
-      const saved = await agentApi.send(sid, text, images, optimistic.id);
+      const saved = await agentApi.send(sid, text, images, optimistic.id, origin);
       if (sidRef.current !== sid) return;
       seen.current.delete(optimistic.id);
       seen.current.add(saved.id);
@@ -136,9 +138,9 @@ export function useAgentSession(sessionId: string | null, lang: Lang) {
 
   /** While running, messages wait in the queue and go out automatically when the agent finishes. */
   const send = useCallback(
-    (text: string, images: string[] = []) => {
+    (text: string, images: string[] = [], origin: RecordingOrigin = {}) => {
       // Messages sent while the bot works go straight in and steer the same run.
-      void sendNow(text, images);
+      void sendNow(text, images, origin);
     },
     [sendNow],
   );

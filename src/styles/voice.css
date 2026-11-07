@@ -10,3 +10,13 @@
 .cx-audio-panel audio{width:100%;max-width:280px;height:36px}
 .cx-audio-panel a{color:var(--foreground)}
 @media(prefers-reduced-motion:reduce){.cx-call{animation:none}}
+.cx-voice-settings{display:grid;gap:14px;margin-top:12px}
+.cx-voice-settings label{display:grid;gap:8px;font-size:13px;color:var(--hub-muted)}
+.cx-voice-settings select{width:100%;min-width:0;padding:12px;background:var(--hub-surface);color:var(--hub-ink);border:1px solid var(--hub-line-strong);border-radius:8px;font-size:14px}
+.cx-voice-settings [role=alert],.cx-voice-message [role=alert]{color:var(--destructive);overflow-wrap:anywhere}
+.cx-voice-message{display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:100%;min-width:0;padding:8px 0}
+.cx-voice-message audio{width:240px;max-width:100%;height:42px}
+.cx-voice-message a{color:var(--hub-ink)}
+.cx-voice-message details{width:100%;font-size:13px;overflow-wrap:anywhere}
+.cx-chat-error{position:absolute;top:80px;inset-inline:16px;z-index:30;display:flex;gap:8px;align-items:flex-start;padding:12px;background:var(--hub-surface);color:var(--hub-ink);border:1px solid var(--hub-line-strong);border-radius:8px;font-size:13px;overflow-wrap:anywhere}
+.cx-chat-error svg{flex:none;color:var(--hub-danger)}
