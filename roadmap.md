@@ -1,5 +1,10 @@
 # Roadmap
 
+## Cartesia voice connection
+- [ ] Connect authenticated Cartesia voice catalogue and speech generation, keeping credentials private.
+- [ ] Add voice/language choice, playable downloadable replies, and microphone recording support in current chat/calls.
+- [ ] Test real Arabic/English generation, endpoint security and playback; document any remaining call limitations.
+
 ## Seven deep performance investigations and free voice services
 - [x] Complete seven independent source investigations and signed-in mobile/desktop performance measurements.
 - [x] Identify measured causes separately from unverified candidates and document prioritized remedies in docs/performance-and-voice-2026-11-07.md; no performance changes applied in this diagnostic request.
