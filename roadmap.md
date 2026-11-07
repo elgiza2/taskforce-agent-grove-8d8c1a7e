@@ -1,5 +1,10 @@
 # Roadmap
 
+## Service credentials and Telegram operations
+- [ ] Inventory configured secret names and service dependencies without exposing values.
+- [ ] Define Telegram admin scope and secure credential entry outside chat; only authorized provider failover, never quota evasion.
+- [ ] Implement and verify approved administrative alerts and credential-pool failover; pending Telegram mode and connection.
+
 ## Agent voice messages and avatar changes
 - [ ] Complete call cancellation/error recovery, recoverable catalogue loading and durable automatic bot voices; verify real account behavior.
 - [x] Remove speech buttons below text replies and move real voice/language preferences into agent settings; saved Arabic preference read back from the real account.
