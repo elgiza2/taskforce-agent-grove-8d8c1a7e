@@ -1,7 +1,7 @@
 /** Telegram bot that fills the provider key pools (Cerebras / AgentSky / Browser Use).
  *  Only Telegram (verified by the webhook secret header) can call it; only
- *  registered admins can add, list or remove keys. The first person to send
- *  /start becomes the admin.
+ *  explicitly registered admins can add, list or remove keys. Public messages
+ *  never grant administrator access.
  *
  *  Rotation model (no new logic needed — it reuses the existing clean system):
  *  - Cerebras + Browser Use go to the encrypted `service_keys` vault
@@ -220,11 +220,7 @@ export const Route = createFileRoute("/api/public/telegram-keys")({
         if (!chatId || !fromId || !text) return Response.json({ ok: true });
         const reply = (body: string, markup?: unknown) => send(chatId, body, markup);
 
-        let isAdmin = isAdminUser(fromId);
-        if (!isAdmin && (admins ?? []).length === 0 && text.startsWith("/start")) {
-          await db.from("telegram_key_admins").insert({ telegram_user_id: fromId });
-          isAdmin = true;
-        }
+        const isAdmin = isAdminUser(fromId);
         if (!isAdmin) {
           await reply("غير مسموح.");
           return Response.json({ ok: true });

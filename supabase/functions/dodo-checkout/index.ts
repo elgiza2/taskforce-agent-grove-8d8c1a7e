@@ -113,7 +113,7 @@ Deno.serve(async (req) => {
   // on the $7 monthly product, so it falls back to `monthly_intro` when no
   // dedicated trial product exists in the catalogue.
   const productKeys = key === "monthly_trial" ? [key, "monthly_intro", "monthly"] : [key];
-  let productId = String(payload.product_id ?? "");
+  let productId = "";
   for (const candidate of productKeys) {
     if (productId) break;
     const { data: product } = await admin

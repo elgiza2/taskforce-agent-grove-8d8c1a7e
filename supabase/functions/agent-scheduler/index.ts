@@ -4,6 +4,7 @@
  *  next_run_at from the cron expression. Failures are recorded, never thrown. */
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { dataServiceKey, dataUrl } from "../_shared/dataProject.ts";
+import { operatorAuthorized } from "../_shared/operatorAuthorization.ts";
 
 const out = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -55,7 +56,7 @@ Deno.serve(async (req: Request) => {
   // Cron token check (same pattern as team-tick).
   const token = req.headers.get("x-team-cron-token") || "";
   const expected = Deno.env.get("TEAM_CRON_TOKEN") || "";
-  if (expected && token !== expected) return out({ error: "unauthorized" }, 401);
+  if (!operatorAuthorized(expected, token)) return out({ error: "unauthorized" }, 401);
 
   const now = new Date().toISOString();
   const { data: due, error } = await db

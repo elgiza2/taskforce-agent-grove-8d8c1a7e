@@ -9,6 +9,7 @@
  *  (`reconcile:dodo:<order_id>`), and a second pass finds it and skips.
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { operatorAuthorized } from "../_shared/operatorAuthorization.ts";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -114,7 +115,7 @@ Deno.serve(async (req) => {
   if (req.method !== "POST" && req.method !== "GET") return json({ error: "method not allowed" }, 405);
 
   const guard = Deno.env.get("RECONCILE_SECRET")?.trim();
-  if (guard && req.headers.get("x-reconcile-secret") !== guard) return json({ error: "unauthorized" }, 401);
+  if (!operatorAuthorized(guard, req.headers.get("x-reconcile-secret"))) return json({ error: "unauthorized" }, 401);
 
   const apiKey = Deno.env.get("DODO_PAYMENTS_API_KEY");
   if (!apiKey) return json({ error: "Dodo Payments is not configured" }, 503);
