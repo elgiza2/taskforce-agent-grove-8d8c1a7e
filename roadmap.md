@@ -1,32 +1,34 @@
 # Roadmap
 
 ## Current completion pass — 2026-11-07 08:23 UTC
-- [ ] Replace the cancelled Telegram connector request with independent Supabase-backed token storage and direct Telegram calls; never store new credentials in Lovable. Supersedes reconnection after the owner's updated instruction.
-- [ ] Verify the newly supplied provider keys with real signed-in chat, web reading and background delivery; record actual outcomes, not configuration assumptions.
-- [ ] Harden first-run account loading and retry-safe primary-bot creation; align onboarding with existing restrained theme.
-- [ ] Replace the stale README with an accurate successor-agent guide covering routing, data flow, encryption limits, operations and verification.
-- [ ] Reconcile this active task list with earlier blocked/superseded tasks and document remaining external blockers.
+- [x] Replace the cancelled Telegram connector request with Supabase Vault storage and direct Telegram calls; getMe, webhook, send and service-only Vault permissions verified. No new Lovable credentials.
+- [x] Verify signed-in calculation (229.74), Example Domain reading and completed background report saved/read through chat. Composio pool configured; external account execution still awaits owner authorization.
+- [x] Add account-load retry and atomic primary-bot/profile completion; two recovery tests passed. Mobile setup display checked using response interception, not a new production account.
+- [x] Replace README with the living successor-agent guide, explicit encryption limits, independent-hosting requirements and current verification.
+- [x] Reconcile obsolete provider/Inngest blockers below. 22 targeted tests passed; build OK. README names unimplemented work separately.
+- [ ] Protected Telegram key-entry and encrypted provider pool remain programming work; current message-based entry is not a secure form. Do not label it complete.
+- [ ] Durable job leases/runtime lifetime and production scheduler still need implementation plus a stable hosting endpoint; local completed-job delivery is verified.
 
 ## Service credentials and Telegram operations
-- [ ] Add Telegram-initiated protected credential entry; keep raw values out of Telegram messages and database tables. Telegram connection verified; pending explicit operator identity and protected secret-storage access.
+- [ ] Add Telegram-initiated protected credential entry; current operator identity and Vault bot token are configured, but provider keys still arrive as messages and pool values are plaintext.
 - [x] Inventory configured secret names and current versus legacy service dependencies without values; see docs/service-credentials-inventory.md.
 - [x] Define Telegram admin scope and secure credential entry outside chat; tested authorized failover classification, not wired into live providers yet.
-- [ ] Implement and verify approved administrative alerts and credential-pool failover; Telegram @Ggfgdffgbot connection verified, pending explicit operator identity and protected secret-storage access.
-- [ ] Reconcile existing external Supabase service secrets with TanStack runtime; credentials already exist in Supabase but are unavailable to this app runtime.
+- [ ] Implement and verify approved administrative alerts and credential-pool failover end-to-end; direct Telegram transport and operator scope now work, legacy connector references are obsolete.
+- [x] Reconcile external Supabase service pool with runtime; live Cerebras and Browserbase calls passed. No gateway dependency in Telegram administration.
 
 ## Agent voice messages and avatar changes
 - [x] Complete call cancellation/error recovery, recoverable catalogue loading and durable automatic bot voices; 10 real bots read back with 10 unique saved voices, cancellation and missing-provider recovery verified.
 - [x] Remove speech buttons below text replies and move real voice/language preferences into agent settings; saved Arabic preference read back from the real account.
 - [x] Implement automatic user language, distinct bot voices, recording-aware replies and private cached audio. Real Arabic voice-message playback verified; 18 targeted tests passed.
 - [x] Remove star avatars and vary bot shapes; mobile/desktop screenshots and recording playback verified without page errors.
-- [ ] Verify an actual new agent reply delivered as a voice message; blocked by missing Cerebras configuration. User recordings are stored on the sending device, not synchronized as audio files.
+- [ ] Verify a new agent reply delivered as a voice message; Cerebras is now configured, this end-to-end audio test remains open. Recordings stay on the sending device.
 - [x] Handle missing chat dependencies as explicit terminal error events instead of page-level 503; real recording submission retained the screen and showed a persistent alert. 13 regression tests passed.
 
 ## Cartesia voice connection
 - [x] Connect authenticated Cartesia voice catalogue and speech generation, keeping credentials private.
 - [x] Add voice/language choice, playable downloadable replies, and microphone recording support in current chat/calls.
 - [x] Test real Arabic/English generation, endpoint security and playback; 60 tests pass. Recorded speech was transcribed and sent through the signed-in call UI. See docs/cartesia-verification-2026-11-07.md.
-- [ ] Verify a complete new agent reply spoken during a call; blocked by the previously missing agent-response provider configuration. Calls currently use explicit record/stop turns, not full-duplex live audio.
+- [ ] Verify a complete new agent reply spoken during a call; provider block is removed, test remains open. Calls use record/stop turns, not full-duplex live audio.
 
 ## Seven deep performance investigations and free voice services
 - [x] Complete seven independent source investigations and signed-in mobile/desktop performance measurements.
@@ -36,11 +38,11 @@
 ## Full verification and real computer — current request
 - [x] Sign in and check real home/history, settings, pricing, memory and Vault save/read-back; current chat failed on missing Cerebras configuration. See current verification report for exact coverage.
 - [x] Repair account-loading recovery, unsafe execution and misleading controls; add regression tests, repeat affected live checks, and harden legacy source guards.
-- [ ] Restore current chat/web/integration configuration; blocked on the owner's existing provider connections/credentials.
+- [x] Restore current chat/web provider configuration; live calculation and page reading passed. External integration account authorization remains separate.
 - [ ] Connect isolated computer execution; blocked on authorized execution-provider configuration and owner-scoped integration.
 - [ ] Finish agent-mediated file/group/delegation, voice/native/payment/scheduled tests; blocked on service/owner/platform configuration.
 - [ ] Verify legacy security fixes on the hosted backend and rotate the exposed provider credential; user-managed deployment/provider access unavailable here.
-- [ ] Complete transactional onboarding, /chat/not-found routing, canonical/legal review and legacy guest-memory/model-input security repairs.
+- [ ] Complete /chat/not-found routing review, legal approval and legacy security repairs; transactional onboarding is now implemented and tested for recovery.
 - [x] Record tested outcomes, source-versus-hosted distinction and remaining limitations in docs/current-verification-2026-11-07.md.
 
 ## Pricing and Vault reference redesign
@@ -53,7 +55,7 @@
 - [x] Send actual text/code/CSV/JSON contents; uploaded CSV read correctly and downloaded contents matched. Binary image/video/PDF analysis remains blocked on a supported analysis service.
 - [x] Reject empty/exhausted completions, retain delegation transcripts and align job-ID polling. Two specialists returned 209.75 and 50; combined answer persisted after reload.
 - [x] Connect daily/weekly routine creation, management and signed execution; a due routine produced a persisted chat answer, duplicate invocation did no work, unsigned invocation returned 401.
-- [ ] Automatic routine scheduling and durable jobs after app closure require a reachable published endpoint and configured scheduler/Inngest credentials; manual signed routine execution is verified.
+- [ ] Automatic routines and durable jobs after app closure require stable hosting and scheduler plus running-job recovery; Inngest was removed. Local background result delivery is verified.
 - [x] Make Vault account-scoped and enforce last-four-only card labels; validation tests passed. Local Vault is not a password or credential store.
 - [ ] Connect actual computer/code execution; blocked until an isolated execution service is available.
 - [ ] Activate Google Play purchases; blocked on signed Android app, Play products and verification credentials.

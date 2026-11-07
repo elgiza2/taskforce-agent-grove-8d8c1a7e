@@ -21,13 +21,13 @@
 .ob-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
 .ob-opt{border:1px solid var(--cv-line);background:var(--cv-pricing-panel);border-radius:8px;padding:16px;text-align:start;color:var(--cv-ink);font-size:15px;font-weight:600;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,background .2s}
 .ob-opt.on{border-color:var(--cv-ink);background:var(--cv-selected)}
-.ob-btn{width:100%;margin-top:auto;height:56px;border-radius:999px;border:0;background:var(--cv-ink);color:var(--cv-pricing);font-size:16px;font-weight:600;transition:opacity .2s,transform .15s}
+.ob .ob-btn{width:100%;margin-top:auto;height:56px;border-radius:999px;border:0;background:var(--cv-ink)!important;color:var(--cv-pricing)!important;box-shadow:none!important;font-size:16px;font-weight:600;transition:opacity .2s,transform .15s}
 .ob-main>.ob-btn{margin-top:auto}.ob-btn:active{transform:scale(.98)}.ob-btn:disabled{opacity:.25}
 .ob-main .ob-opts+.ob-btn{margin-top:auto}
 /* Main-bot step: reuse the bot creator inside the same black flow */
 .ob-bot .gx-create{background:transparent !important;min-height:0;flex:1;width:100%;padding:0 !important;position:static !important;display:flex;flex-direction:column}
 .ob-bot .gx-create-head{display:none !important}
-.ob-bot .gx-create-body{padding-top:0 !important}
+.ob-bot .gx-create-body{padding:0 !important;flex:none!important;gap:10px!important}
 .ob-bot .gx-name{background:var(--cv-pricing-panel) !important;border:1px solid var(--cv-line) !important;border-radius:8px !important}
 .ob-bot .gx-create-cta{position:static !important;width:100%;margin:auto 0 0 !important;height:56px;border-radius:999px;background:var(--cv-ink) !important;color:var(--cv-pricing) !important}
 .ob-bot .gx-create-cta:disabled{opacity:.25}
@@ -35,7 +35,7 @@
 /* Compact main-bot step so it fits without scrolling */
 .ob-main.ob-bot{padding-top:8px}
 .ob-main.ob-bot .ob-sub{margin-bottom:14px}
-.ob-bot .gx-create-preview{margin-bottom:16px !important}
+.ob-bot .gx-create-preview{margin-bottom:8px !important;min-height:96px!important;height:96px!important;flex:none!important}
 .ob-bot .gx-create-preview>*{transform:scale(.8);transform-origin:center}
 .ob-bot .gx-name{height:50px !important;font-size:17px !important}
 .ob-bot .gx-shapes{gap:6px 10px !important;margin:16px 0 14px !important}
