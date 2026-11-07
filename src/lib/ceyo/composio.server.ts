@@ -1,3 +1,4 @@
+import { getProviderKey } from "@/lib/keys/providerKey";
 import { z } from "zod";
 import { actionInput } from "./toolSchemas";
 const BASE = "https://backend.composio.dev/api/v3.1";
@@ -5,7 +6,7 @@ const aliases: Record<string, string> = { google_sheets: "googlesheets", google_
 export const toolkitSlug = (app: string) => aliases[app] || app.replace(/[^a-z0-9]/gi, "").toLowerCase();
 
 export async function composio(path: string, method = "GET", body?: unknown) {
-  const key = process.env.COMPOSIO_API_KEY;
+  const key = await getProviderKey("composio");
   if (!key) throw new Error("Composio is not configured");
   const response = await fetch(`${BASE}${path}`, { method, headers: { "x-api-key": key, "Content-Type": "application/json" }, ...(body ? { body: JSON.stringify(body) } : {}) });
   if (!response.ok) {

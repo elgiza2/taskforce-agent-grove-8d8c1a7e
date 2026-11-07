@@ -1,3 +1,4 @@
+import { getProviderKey } from "@/lib/keys/providerKey";
 /** @doc Bot reply loop: Cerebras streams the answer and may call web tools (Browserbase) several times before it finishes. */
 const CEREBRAS_URL = "https://api.cerebras.ai/v1/chat/completions";
 /** Cheapest + fastest model on Cerebras. */
@@ -27,7 +28,7 @@ const tools = [
 ];
 
 async function bbFetch(url: string): Promise<string> {
-  const key = process.env.BROWSERBASE_API_KEY;
+  const key = await getProviderKey("browserbase");
   if (!key) throw new Error("Browser is not configured");
   const r = await fetch("https://api.browserbase.com/v1/fetch", {
     method: "POST",
