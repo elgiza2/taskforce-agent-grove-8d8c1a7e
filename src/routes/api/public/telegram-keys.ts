@@ -16,8 +16,6 @@ function safeEqual(a: string, b: string) {
   return x.length === y.length && timingSafeEqual(x, y);
 }
 
-const mask = (k: string) => (k.length > 12 ? `${k.slice(0, 5)}…${k.slice(-4)}` : "••••");
-
 type ProviderId = "cerebras" | "browserbase" | "composio";
 const PROVIDERS: Record<ProviderId, { label: string; icon: string; use: string }> = {
   cerebras: { label: "Cerebras", icon: "🧠", use: "ردود الوكلاء" },
@@ -26,7 +24,7 @@ const PROVIDERS: Record<ProviderId, { label: string; icon: string; use: string }
 };
 const IDS = Object.keys(PROVIDERS) as ProviderId[];
 
-function normalizeProvider(raw: string): ProviderId | null {
+export function normalizeProvider(raw: string): ProviderId | null {
   const v = raw.trim().toLowerCase();
   if (v === "cerebras" || v === "c") return "cerebras";
   if (v === "browserbase" || v === "browser" || v === "b") return "browserbase";
@@ -42,7 +40,7 @@ async function validateKey(p: ProviderId, key: string): Promise<boolean> {
         : p === "browserbase"
           ? await fetch("https://api.browserbase.com/v1/projects", { headers: { "X-BB-API-Key": key } })
           : await fetch("https://backend.composio.dev/api/v3/auth_configs?limit=1", { headers: { "x-api-key": key } });
-    return ![401, 402, 403].includes(res.status);
+    return res.ok;
   } catch {
     return false;
   }
@@ -75,19 +73,14 @@ export const Route = createFileRoute("/api/public/telegram-keys")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const token = process.env.TELEGRAM_API_KEY;
-        const gatewayKey = process.env.LOVABLE_API_KEY;
-        if (!token || !gatewayKey) return new Response("not configured", { status: 500 });
+        const { getTelegramBotToken, telegramRequest } = await import("@/lib/keys/telegram.server");
+        const token = await getTelegramBotToken().catch(() => null);
+        if (!token) return new Response("not configured", { status: 500 });
         const header = request.headers.get("X-Telegram-Bot-Api-Secret-Token") ?? "";
         if (!safeEqual(header, telegramWebhookSecret(token))) return new Response("Unauthorized", { status: 401 });
 
         const update = await request.json().catch(() => null);
-        const tg = (method: string, body: unknown) =>
-          fetch(`https://connector-gateway.lovable.dev/telegram/${method}`, {
-            method: "POST",
-            headers: { Authorization: `Bearer ${gatewayKey}`, "X-Connection-Api-Key": token, "Content-Type": "application/json" },
-            body: JSON.stringify(body),
-          });
+        const tg = (method: string, body: unknown) => telegramRequest(token, method, body);
         const send = (chatId: number, text: string, markup?: unknown) =>
           tg("sendMessage", { chat_id: chatId, text, parse_mode: "HTML", ...(markup ? { reply_markup: markup } : {}) });
 
@@ -113,7 +106,7 @@ export const Route = createFileRoute("/api/public/telegram-keys")({
           lines.push("");
           rows.forEach((r, i) => {
             const state = r.status !== "active" ? "⛔" : r.cooldown_until && new Date(r.cooldown_until) > new Date() ? "⏳" : "✅";
-            lines.push(`${i + 1}. ${state} ${PROVIDERS[r.provider]?.label ?? r.provider} <code>${mask(r.api_key)}</code>`);
+            lines.push(`${i + 1}. ${state} ${PROVIDERS[r.provider]?.label ?? r.provider}`);
           });
           if (rows.length) lines.push("", "للحذف: <code>/del رقم</code>");
           await send(chatId, lines.join("\n"), menu());
@@ -126,8 +119,8 @@ export const Route = createFileRoute("/api/public/telegram-keys")({
             { provider: p, api_key: key, status: "active", failure_count: 0, last_error: null, cooldown_until: null },
             { onConflict: "provider,api_key" },
           );
-          if (error) return send(chatId, `حصلت مشكلة في الحفظ ❌\n<code>${error.message}</code>`);
-          return send(chatId, `${PROVIDERS[p].icon} اتحفظ مفتاح ${PROVIDERS[p].label} <code>${mask(key)}</code> ✅\nشغال فورًا في التطبيق.`, menu());
+          if (error) return send(chatId, "حصلت مشكلة في الحفظ ❌");
+          return send(chatId, `${PROVIDERS[p].icon} اتحفظ مفتاح ${PROVIDERS[p].label} ✅\nشغال فورًا في التطبيق.`, menu());
         };
 
         const callback = update?.callback_query;
@@ -136,7 +129,7 @@ export const Route = createFileRoute("/api/public/telegram-keys")({
           const chatId = Number(callback?.message?.chat?.id);
           const data = String(callback?.data ?? "");
           await tg("answerCallbackQuery", { callback_query_id: callback.id }).catch(() => undefined);
-          if (!chatId || !owners.includes(fromId)) return Response.json({ ok: true });
+          if (!chatId || !owners.includes(fromId) || callback?.message?.chat?.type !== "private") return Response.json({ ok: true });
           if (data === "keys:list") await showKeys(chatId);
           const picked = data.startsWith("keys:provider:") ? normalizeProvider(data.slice(14)) : null;
           if (picked) {
@@ -171,15 +164,15 @@ export const Route = createFileRoute("/api/public/telegram-keys")({
           if (!row) await send(chatId, "الرقم ده مش موجود.");
           else {
             await db.from("provider_api_keys").delete().eq("id", row.id);
-            await send(chatId, `اتحذف ${PROVIDERS[row.provider]?.label ?? row.provider} <code>${mask(row.api_key)}</code> ✅`);
+            await send(chatId, `اتحذف ${PROVIDERS[row.provider]?.label ?? row.provider} ✅`);
           }
         } else if (/^\/keys/i.test(text)) {
           await showKeys(chatId);
         } else if (!text.startsWith("/") && pendingProvider.has(fromId)) {
-          const p = pendingProvider.get(fromId)!;
+          const p = pendingProvider.get(fromId);
           pendingProvider.delete(fromId);
           await dropMessage();
-          await addKey(chatId, p, text);
+          if (p) await addKey(chatId, p, text);
         } else {
           await send(chatId, HELP, menu());
         }
