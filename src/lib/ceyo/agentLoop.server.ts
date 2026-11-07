@@ -1,3 +1,4 @@
+import { getCerebrasKeys } from "@/lib/keys/cerebrasKey";
 import { getProviderKey } from "@/lib/keys/providerKey";
 /** @doc Bot reply loop: Cerebras streams the answer and may call web tools (Browserbase) several times before it finishes. */
 const CEREBRAS_URL = "https://api.cerebras.ai/v1/chat/completions";
@@ -112,7 +113,7 @@ export async function runAgentLoop(
   const extras = [...(opts.extras || []), ...(opts.extra ? [opts.extra] : [])];
   const allTools = [...tools, ...extras.map((extra) => extra.def)];
   const maxSteps = opts.maxSteps ?? MAX_STEPS;
-  const keys = (process.env.CEREBRAS_API_KEY || "").split(/[\s,]+/).filter(Boolean);
+  const keys = (await getCerebrasKeys()).map((k) => k.api_key);
   if (!keys.length) throw new Error("AI is not configured");
   const messages: Msg[] = [{ role: "system", content: system }, ...history];
   let answer = "";
