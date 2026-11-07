@@ -1,8 +1,8 @@
 # Roadmap
 
 ## Company and legal pages — 2026-11-07
-- [ ] Complete About, Contact, Privacy, Terms, Subscription Terms, Cookies and Security pages with verified company/product facts.
-- [ ] Add public navigation, page-specific metadata and mobile/desktop verification; update README without claiming legal approval.
+- [x] Complete About, Contact, Privacy, Terms, Subscription Terms, Cookies and Security under Megsy LLC; remove unsupported deadlines/caps and disclose analytics/voice/encryption boundaries.
+- [x] Add public navigation, settings links and seven leaf metadata heads; all pages opened signed-out, internal navigation and mail contact verified, mobile/desktop screenshots checked, no page errors/overflow; routing test passed and build OK. README updated. Legal approval and hosted tracking configuration remain unverified.
 
 ## Current completion pass — 2026-11-07 08:23 UTC
 - [x] Replace the cancelled Telegram connector request with Supabase Vault storage and direct Telegram calls; getMe, webhook, send and service-only Vault permissions verified. No new Lovable credentials.
