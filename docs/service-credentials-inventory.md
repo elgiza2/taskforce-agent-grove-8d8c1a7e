@@ -7,12 +7,14 @@ Names only; no credential values or derived hints are stored in this report.
 - `LOVABLE_API_KEY`: managed Lovable access; current transcription uses this credential.
 - `LOVABLE_CRON_SECRET`: managed scheduled endpoint verification.
 
-## Referenced by current code but absent from the configured-secret listing
+## Present in external Supabase secrets, unavailable to current TanStack runtime
 - `CEREBRAS_API_KEY`: current agent loop; missing prevents actual new model replies.
 - `BROWSERBASE_API_KEY`: current agent web search/page reads.
 - `COMPOSIO_API_KEY`: current external-service account tools.
 - `INNGEST_SIGNING_KEY`, `INNGEST_EVENT_KEY`: durable job delivery.
 - `APP_URL`: nonsecret published application URL required by job delivery.
+
+The subsequently supplied external Supabase configuration confirms Cerebras, Browserbase, Composio and Inngest credentials already exist there. The app runtime presence checks still report them unavailable. Do not request replacement provider credentials as though they were absent everywhere; the deployment binding must be reconciled. External Supabase Edge secret storage is distinct from the TanStack application secret environment.
 
 Legacy source also references AgentSky, Browser Use, payment and email credentials; those references do not prove the current app uses or has those services configured. Imported Telegram key management is a legacy route and its pools are not consumed by the current agent/audio loop.
 
