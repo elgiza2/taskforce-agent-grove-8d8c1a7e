@@ -1,6 +1,7 @@
 /** @doc Browser client for /api/agent/* — the only way the UI talks to the AgentSky agent. */
 import { supabase } from "@/integrations/supabase/client";
-import type { AgentVoiceSettings, RecordingOrigin } from "@/lib/audio/agentVoice";
+import { assignAgentVoices, type AgentVoiceSettings, type RecordingOrigin } from "@/lib/audio/agentVoice";
+import type { Voice } from "@/lib/audio/voiceSchema";
 import { readEventStream } from "./readEventStream";
 
 export type AgentColor = "aurora" | "ocean" | "ember" | "mint" | "sun" | "rose" | "mono";
@@ -157,6 +158,24 @@ if (typeof window !== "undefined") setInterval(() => void checkBackgroundJobs(),
 const agentInput = (a: { name: string; description: string; prompt: string; color: AgentColor; voiceSettings?: AgentVoiceSettings }) => ({ name: a.name, description: a.description, instructions: a.prompt, look: { color: a.color, ...(a.voiceSettings ? { voiceSettings: a.voiceSettings } : {}) } });
 
 export const agentApi = {
+  ensureVoiceAssignments: async (voices: Voice[]) => {
+    const user = await uid();
+    const { data: bots, error } = await db.from("bots").select("id,look").eq("owner_id", user).order("created_at");
+    if (error) fail(error);
+    const existing: Record<string, string> = {};
+    for (const bot of bots || []) {
+      const settings = bot.look?.voiceSettings;
+      const saved = settings?.autoVoiceId || (voices.some((v) => v.id === settings?.voice) ? settings.voice : "");
+      if (saved) existing[bot.id] = saved;
+    }
+    const assignments = assignAgentVoices(voices, (bots || []).map((b: any) => b.id), existing);
+    for (const bot of bots || []) {
+      if (existing[bot.id] || !assignments[bot.id]) continue;
+      const { error: saveError } = await db.from("bots").update({ look: { ...bot.look, voiceSettings: { voice: "Not set", language: "Auto", speed: 1, ...bot.look?.voiceSettings, autoVoiceId: assignments[bot.id] } } }).eq("id", bot.id).eq("owner_id", user);
+      if (saveError) fail(saveError);
+    }
+    return assignments;
+  },
   bootstrap: async () => {
     const user = await uid();
     const [{ data: bots, error }, { data: prof }] = await Promise.all([

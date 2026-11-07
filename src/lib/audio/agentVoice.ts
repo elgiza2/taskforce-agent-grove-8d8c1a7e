@@ -1,6 +1,6 @@
 import type { Voice } from "./voiceSchema";
 
-export type AgentVoiceSettings = { voice: string; language: string; speed: number };
+export type AgentVoiceSettings = { voice: string; language: string; speed: number; autoVoiceId?: string };
 export type RecordingOrigin = { voiceOrigin?: "recording"; recordingId?: string };
 
 export function resolveLanguage(setting: string, userLanguage: string) {
@@ -9,12 +9,13 @@ export function resolveLanguage(setting: string, userLanguage: string) {
   return raw.toLowerCase().split(/[-_]/)[0] || "en";
 }
 
-export function assignAgentVoices(voices: Voice[], agentIds: string[]) {
+export function assignAgentVoices(voices: Voice[], agentIds: string[], existing: Record<string, string> = {}) {
   const sorted = [...voices].sort((a, b) => a.id.localeCompare(b.id));
   const ids = [...new Set(agentIds)].sort();
-  const assigned: Record<string, string> = {};
-  const used = new Set<string>();
+  const assigned: Record<string, string> = { ...existing };
+  const used = new Set(Object.values(existing));
   for (const id of ids) {
+    if (assigned[id]) continue;
     let hash = 0;
     for (const c of id) hash = (hash * 31 + c.charCodeAt(0)) >>> 0;
     if (!sorted.length) break;
@@ -28,7 +29,7 @@ export function assignAgentVoices(voices: Voice[], agentIds: string[]) {
 
 export function resolveVoice(voices: Voice[], agentId: string, agentIds: string[], settings: AgentVoiceSettings, userLanguage: string) {
   const language = resolveLanguage(settings.language, userLanguage);
-  const explicit = voices.find((v) => v.id === settings.voice);
+  const explicit = voices.find((v) => v.id === settings.voice) || voices.find((v) => v.id === settings.autoVoiceId);
   // Cartesia voices are multilingual; the bot's identity does not change with language.
   const voiceId = explicit?.id || assignAgentVoices(voices, [...agentIds, agentId])[agentId] || "";
   return { language, voiceId };
