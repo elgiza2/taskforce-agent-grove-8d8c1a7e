@@ -134,18 +134,28 @@ export const Route = createFileRoute("/api/public/telegram-keys")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const token = process.env.TELEGRAM_KEYS_BOT_TOKEN;
-        if (!token) return new Response("not configured", { status: 500 });
+        const token = process.env.TELEGRAM_API_KEY;
+        const gatewayKey = process.env.LOVABLE_API_KEY;
+        if (!token || !gatewayKey) return new Response("not configured", { status: 500 });
         const header = request.headers.get("X-Telegram-Bot-Api-Secret-Token") ?? "";
         if (!safeEqual(header, telegramWebhookSecret(token)))
           return new Response("Unauthorized", { status: 401 });
 
         const update = await request.json().catch(() => null);
-        const send = (chatId: number, text: string, replyMarkup?: unknown) =>
-          fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        const tg = (method: string, body: unknown) =>
+          fetch(`https://connector-gateway.lovable.dev/telegram/${method}`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
+            headers: { Authorization: `Bearer ${gatewayKey}`, "X-Connection-Api-Key": token, "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+        const send = (chatId: number, text: string, replyMarkup?: unknown) =>
+          tg("sendMessage", {
+            chat_id: chatId,
+            text,
+            parse_mode: "HTML",
+            ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
+          });
+        void ({
               chat_id: chatId,
               text,
               parse_mode: "HTML",
