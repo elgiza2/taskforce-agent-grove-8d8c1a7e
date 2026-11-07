@@ -459,7 +459,7 @@ export function HubChat({
           busy={s.running || starting}
           replyError={s.error || lastAgent?.error}
           replyId={lastAgent?.id}
-          lastReply={bubbles.length && bubbles[bubbles.length - 1].role === "agent" ? bubbles[bubbles.length - 1].text : ""}
+          lastReply={lastAgent?.text || ""}
           onSay={(text) => { setPinned(true); if (!sessionId && !demo) void startConversation(text); else s.send(text); }}
           onEnd={() => setCalling(false)}
         />

@@ -30,21 +30,33 @@ export async function transcribeRecording(file: Blob, language: string, signal?:
   return String(body.text);
 }
 
-export async function microphoneRecording() {
+export async function microphoneRecording(options: { autoStop?: boolean } = {}) {
   if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") throw new Error("Microphone recording is unavailable in this browser.");
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   try {
     const mimeType = ["audio/webm;codecs=opus", "audio/mp4", "audio/webm"].find((type) => MediaRecorder.isTypeSupported(type));
     const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
     const parts: Blob[] = [];
+    let detector: { stop: () => void } | undefined;
+    let silenceTimer: ReturnType<typeof setTimeout> | undefined;
+    const release = () => { clearTimeout(timer); clearTimeout(silenceTimer); detector?.stop(); stream.getTracks().forEach((t) => t.stop()); };
     let timer: ReturnType<typeof setTimeout>;
     const result = new Promise<Blob>((resolve, reject) => {
       recorder.ondataavailable = (event) => { if (event.data.size) parts.push(event.data); };
-      recorder.onerror = () => { clearTimeout(timer); stream.getTracks().forEach((t) => t.stop()); reject(new Error("Recording failed")); };
-      recorder.onstop = () => { clearTimeout(timer); stream.getTracks().forEach((t) => t.stop()); resolve(new Blob(parts, { type: recorder.mimeType })); };
+      recorder.onerror = () => { release(); reject(new Error("Recording failed")); };
+      recorder.onstop = () => { release(); resolve(new Blob(parts, { type: recorder.mimeType })); };
     });
     recorder.start();
     const stop = () => { if (recorder.state !== "inactive") recorder.stop(); };
+    if (options.autoStop) {
+      try {
+        const { default: hark } = await import("hark");
+        const speech = hark(stream, { threshold: -50, interval: 100, play: false });
+        detector = speech;
+        speech.on("speaking", () => clearTimeout(silenceTimer));
+        speech.on("stopped_speaking", () => { clearTimeout(silenceTimer); silenceTimer = setTimeout(stop, 1200); });
+      } catch (error) { stop(); throw error; }
+    }
     timer = setTimeout(stop, 60_000);
     return { stop, result };
   } catch (error) { stream.getTracks().forEach((t) => t.stop()); throw error; }
