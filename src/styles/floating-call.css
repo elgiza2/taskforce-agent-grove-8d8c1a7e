@@ -1,0 +1,8 @@
+.cx-call.cx-call-cartesia{position:fixed;left:16px;right:auto;top:90px;width:min(402px,calc(100vw - 32px));z-index:100;padding:22px 10px 12px;gap:7px;background:var(--cv-panel);color:var(--cv-ink);border-radius:8px;flex-wrap:wrap}
+.cx-call-cartesia .cx-call-content{flex:1;min-width:80px;display:flex;flex-direction:column;font-size:12px;overflow-wrap:anywhere}
+.cx-call-cartesia .cx-call-btn{width:36px;height:36px;background:var(--cv-active);color:var(--cv-ink)}
+.cx-call-cartesia .cx-call-end{background:var(--destructive);color:var(--destructive-foreground)}
+.cx-call-drag{position:absolute;top:0;left:0;right:0;height:22px;display:grid;place-items:center;cursor:grab;touch-action:none;color:var(--cv-muted)}
+.cx-call-cartesia[data-minimized=true]{width:64px;height:78px;border-radius:999px;padding:22px 8px 8px;display:grid;place-items:center}
+.cx-call-restore{width:44px;height:44px;padding:0;border-radius:999px}
+@media(prefers-reduced-motion:reduce){.cx-call{animation:none}}
