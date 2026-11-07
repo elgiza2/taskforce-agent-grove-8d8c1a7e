@@ -1,5 +1,10 @@
 # Roadmap
 
+## Voice call repair — 2026-11-07 09:10 UTC
+- [ ] Reproduce missing automatic voice replies and repair listening/reply playback lifecycle.
+- [ ] Make calls circular and neutral; restore/clamp expanded calls inside conversation on mobile.
+- [ ] Verify recorded speech → agent → audible response, minimize/restore near screen edges; update README.
+
 ## Pricing, navigation, calls and chat media — 2026-11-07
 - [x] Pricing fits 434×764 for all three plans; preserve prices, cache completed setup in-session and add restrained navigation animation without account-loading text.
 - [x] Correct recording MIME and use direct Cartesia transcription; ID-based reply playback, draggable/minimized robot call works through an actual recorded-sample → chat → speech UI test. Latest user goal returned 15; normalize historical speaker/incomplete content.
