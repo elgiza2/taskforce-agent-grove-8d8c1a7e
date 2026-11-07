@@ -6,7 +6,7 @@
 - [ ] Implement and verify approved administrative alerts and credential-pool failover; pending Telegram mode and connection.
 
 ## Agent voice messages and avatar changes
-- [ ] Complete call cancellation/error recovery, recoverable catalogue loading and durable automatic bot voices; verify real account behavior.
+- [x] Complete call cancellation/error recovery, recoverable catalogue loading and durable automatic bot voices; 10 real bots read back with 10 unique saved voices, cancellation and missing-provider recovery verified.
 - [x] Remove speech buttons below text replies and move real voice/language preferences into agent settings; saved Arabic preference read back from the real account.
 - [x] Implement automatic user language, distinct bot voices, recording-aware replies and private cached audio. Real Arabic voice-message playback verified; 18 targeted tests passed.
 - [x] Remove star avatars and vary bot shapes; mobile/desktop screenshots and recording playback verified without page errors.
