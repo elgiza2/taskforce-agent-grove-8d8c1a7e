@@ -1,10 +1,10 @@
 # Roadmap
 
 ## Service credentials and Telegram operations
-- [ ] Add Telegram-initiated protected credential entry; keep raw values out of Telegram messages and database tables, pending secure bot connection.
+- [ ] Add Telegram-initiated protected credential entry; keep raw values out of Telegram messages and database tables. Telegram connection verified; pending explicit operator identity and protected secret-storage access.
 - [x] Inventory configured secret names and current versus legacy service dependencies without values; see docs/service-credentials-inventory.md.
 - [x] Define Telegram admin scope and secure credential entry outside chat; tested authorized failover classification, not wired into live providers yet.
-- [ ] Implement and verify approved administrative alerts and credential-pool failover; pending secure Telegram connection and protected secret-storage access.
+- [ ] Implement and verify approved administrative alerts and credential-pool failover; Telegram @Ggfgdffgbot connection verified, pending explicit operator identity and protected secret-storage access.
 - [ ] Reconcile existing external Supabase service secrets with TanStack runtime; credentials already exist in Supabase but are unavailable to this app runtime.
 
 ## Agent voice messages and avatar changes
