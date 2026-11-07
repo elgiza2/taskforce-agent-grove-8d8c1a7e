@@ -660,6 +660,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      read_telegram_bot_token: { Args: never; Returns: string }
       save_bot_group: {
         Args: {
           p_category?: string
@@ -685,6 +686,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      store_telegram_bot_token: {
+        Args: { p_token: string }
+        Returns: undefined
       }
     }
     Enums: {
