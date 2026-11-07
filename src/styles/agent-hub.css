@@ -404,8 +404,13 @@
 .hub-row-title time { font-size: 11.5px; }
 .hub-row-preview { font-size: 12.5px; margin-top: 2px; }
 
-/* Home header: fully transparent, floating buttons (no background, no borders) */
-.hub-home-header{background:transparent;border:0;box-shadow:none;backdrop-filter:none}
-.hub-home-header .hub-icon-button{border:0 !important;background:transparent !important;box-shadow:none !important;color:var(--hub-ink)}
-.hub-home-header .hub-icon-button:hover,.hub-home-header .hub-icon-button[data-active="true"]{background:var(--hub-surface) !important}
-.hub-home-header .hub-user-avatar{box-shadow:none;background:transparent;border:0}
+/* Home header: the bar itself carries nothing — no background, no border, no
+   blur — and floats over the list so the robot can scroll up and pass across
+   it. Only the buttons keep their own round backgrounds. */
+.hub-home{--hub-home-header-h:calc(max(14px,env(safe-area-inset-top)) + 70px)}
+.hub-home-header{position:absolute;inset-inline:0;top:0;min-height:var(--hub-home-header-h);background:transparent;border:0;box-shadow:none;backdrop-filter:none;pointer-events:none}
+.hub-home-header > *{pointer-events:auto}
+.hub-home-scroll{padding-top:var(--hub-home-header-h)}
+.hub-home-header .hub-icon-button{border:0 !important;background:var(--hub-surface) !important;box-shadow:none !important;color:var(--hub-ink);border-radius:999px}
+.hub-home-header .hub-icon-button:hover,.hub-home-header .hub-icon-button[data-active="true"]{background:var(--hub-surface-raised) !important}
+.hub-home-header .hub-user-avatar{box-shadow:none;background:var(--hub-surface);border:0}
