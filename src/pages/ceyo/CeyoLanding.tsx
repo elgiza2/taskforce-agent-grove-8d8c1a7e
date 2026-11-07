@@ -30,7 +30,7 @@ export default function CeyoLanding() {
         <article><Users size={22} /><h3>Group chats of bots</h3><p>Put several bots in one group. Each one answers with its own name and character.</p></article>
         <article><LayoutGrid size={22} /><h3>Connect your apps</h3><p>Link GitHub, Gmail, Shopify and more so your bots can act for you.</p></article>
       </section>
-      <footer className="ceyo-land-foot">© Ceyo · ceyo.si <Link to="/terms">Terms</Link><Link to="/privacy">Privacy</Link></footer>
+      <footer className="ceyo-land-foot">© 2026 Megsy LLC · <Link to="/terms">Terms</Link><Link to="/privacy">Privacy</Link></footer>
     </div>
   );
 }
