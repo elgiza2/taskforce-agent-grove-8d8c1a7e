@@ -9,7 +9,7 @@ const completedAccounts = new Set<string>();
 /** Sends signed-in users who haven't finished first-run setup to /onboarding. */
 export function OnboardingGate({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<"wait" | "ok" | "setup" | "error">(() => {
-    const id = getAuthState().user?.id;
+    const id = getAuthState().userId;
     return id && completedAccounts.has(id) ? "ok" : "wait";
   });
   const [attempt, setAttempt] = useState(0);

@@ -23,7 +23,7 @@ const PageTransition = ({
     const animation = ref.current?.animate([{ opacity: 0.92, transform: "translateY(3px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 160, easing: "cubic-bezier(.2,.8,.2,1)" });
     return () => animation?.cancel();
   }, [location?.pathname]);
-  return <div ref={ref} className="contents">{children}</div>;
+  return <div ref={ref} className="min-h-dvh">{children}</div>;
 };
 
 export default PageTransition;

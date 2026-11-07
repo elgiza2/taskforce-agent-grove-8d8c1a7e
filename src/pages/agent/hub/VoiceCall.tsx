@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Mic, MicOff, X, Square } from "lucide-react";
+import { Mic, MicOff, X, Square, Minus, GripHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AgentInfo } from "@/lib/agentsky/client";
 import { getSpeech, microphoneRecording, transcribeRecording } from "@/lib/audio/voiceClient";
@@ -10,7 +10,7 @@ import { useVoiceChoice } from "./VoiceControls";
 
 /** Turn-based calls: explicit recording, authenticated transcription and Cartesia reply. */
 export function VoiceCallBar({ agent, lang, busy, lastReply, onSay, onEnd, settings, agentIds, replyError }: {
-  replyError?: string | null; settings: AgentVoiceSettings; agentIds: string[]; agent: AgentInfo; lang: HubLang; busy: boolean; lastReply: string; onSay: (text: string) => void; onEnd: () => void;
+  replyError?: string | null; replyId?: string; settings: AgentVoiceSettings; agentIds: string[]; agent: AgentInfo; lang: HubLang; busy: boolean; lastReply: string; onSay: (text: string) => void; onEnd: () => void;
 }) {
   const ar = lang === "ar";
   const choice = useVoiceChoice(ar ? "ar" : "en", agent.id, agentIds, settings);
