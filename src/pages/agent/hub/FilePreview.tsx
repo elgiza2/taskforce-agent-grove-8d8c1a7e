@@ -7,6 +7,7 @@ export function FilePreview({ id, name, content: supplied }: { id?: string; name
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState(supplied || "");
   const [error, setError] = useState("");
+  const drawing = /\.(svg|html?)$/i.test(name);
   const [loading, setLoading] = useState(false);
   const load = async () => {
     setOpen(true);
@@ -22,7 +23,7 @@ export function FilePreview({ id, name, content: supplied }: { id?: string; name
   };
   return <div className="chat-file-preview">
     <Button variant="ghost" className="chat-file-open" onClick={() => void load()}><FileText size={20} /><span>{name}</span><Eye size={16} /></Button>
-    {open && <div className="chat-file-body"><div className="chat-file-tools"><Button variant="ghost" size="icon" disabled={!content} aria-label="Download file" title="Download file" onClick={download}><Download size={17} /></Button><Button variant="ghost" size="icon" aria-label="Close preview" title="Close preview" onClick={() => setOpen(false)}><X size={17} /></Button></div>{loading ? <div className="h-8 animate-pulse bg-muted" /> : error ? <p role="alert">{error}</p> : <pre dir="auto">{content}</pre>}</div>}
+    {open && <div className="chat-file-body"><div className="chat-file-tools"><Button variant="ghost" size="icon" disabled={!content} aria-label="Download file" title="Download file" onClick={download}><Download size={17} /></Button><Button variant="ghost" size="icon" aria-label="Close preview" title="Close preview" onClick={() => setOpen(false)}><X size={17} /></Button></div>{loading ? <div className="h-8 animate-pulse bg-muted" /> : error ? <p role="alert">{error}</p> : <>{drawing && <iframe sandbox="" referrerPolicy="no-referrer" title={name} srcDoc={`<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:;">${content}`} className="chat-drawing-preview" />}<pre dir="auto">{content}</pre></>}</div>}
   </div>;
 }
 
