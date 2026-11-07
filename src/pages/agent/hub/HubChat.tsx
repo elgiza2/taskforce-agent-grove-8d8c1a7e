@@ -40,7 +40,7 @@ import { MediaCreator } from "./MediaCreator";
 import "@/styles/chat-previews.css";
 import { prefersVoiceReply, type AgentVoiceSettings, type RecordingOrigin } from "@/lib/audio/agentVoice";
 import { cacheRecording } from "@/lib/audio/recordingCache";
-import { microphoneRecording, transcribeRecording } from "@/lib/audio/voiceClient";
+import { microphoneRecording, transcribeRecording, unlockCallAudio } from "@/lib/audio/voiceClient";
 import { ChoiceCard, ConnectAppsCard, SecretCard, readConnectApps } from "./HubCards";
 import { AgentProposalCard } from "@/components/agent/AgentProposalCard";
 import { orbStateFor, type AgentTurn } from "@/lib/agentsky/transcript";
@@ -614,7 +614,7 @@ export function HubChat({
           onUnqueue={s.unqueue}
           onNew={() => onSession(null)}
           onConnect={() => nav("/settings/apps")}
-          onCall={group ? undefined : () => setCalling(true)}
+          onCall={group ? undefined : () => { unlockCallAudio(); setCalling(true); }}
           members={group ? agents.filter((a) => group.memberIds.includes(a.id)) : undefined}
         />
       )}
