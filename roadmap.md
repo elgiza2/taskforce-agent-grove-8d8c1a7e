@@ -1,6 +1,7 @@
 # Roadmap
 
 ## Service credentials and Telegram operations
+- [ ] Add Telegram-initiated protected credential entry; keep raw values out of Telegram messages and database tables, pending secure bot connection.
 - [x] Inventory configured secret names and current versus legacy service dependencies without values; see docs/service-credentials-inventory.md.
 - [x] Define Telegram admin scope and secure credential entry outside chat; tested authorized failover classification, not wired into live providers yet.
 - [ ] Implement and verify approved administrative alerts and credential-pool failover; pending Telegram mode and connection.
