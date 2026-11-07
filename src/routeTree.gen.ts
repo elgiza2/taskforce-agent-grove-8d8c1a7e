@@ -34,7 +34,6 @@ import { Route as ApiPublicCeyoJobsRouteImport } from './routes/api/public/ceyo-
 import { Route as ApiPublicCeyoRoutinesRouteImport } from './routes/api/public/ceyo-routines'
 import { Route as ApiPublicFxRouteImport } from './routes/api/public/fx'
 import { Route as ApiPublicGeoRouteImport } from './routes/api/public/geo'
-import { Route as ApiPublicInngestRouteImport } from './routes/api/public/inngest'
 import { Route as ApiPublicRemindersTickRouteImport } from './routes/api/public/reminders-tick'
 import { Route as ApiPublicTelegramKeysRouteImport } from './routes/api/public/telegram-keys'
 import { Route as ApiPublicAgentToolsTokenRouteImport } from './routes/api/public/agent-tools.$token'
@@ -166,11 +165,6 @@ const ApiPublicGeoRoute = ApiPublicGeoRouteImport.update({
   path: '/api/public/geo',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicInngestRoute = ApiPublicInngestRouteImport.update({
-  id: '/api/public/inngest',
-  path: '/api/public/inngest',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicRemindersTickRoute = ApiPublicRemindersTickRouteImport.update({
   id: '/api/public/reminders-tick',
   path: '/api/public/reminders-tick',
@@ -226,7 +220,6 @@ export interface FileRoutesByFullPath {
   '/api/public/ceyo-routines': typeof ApiPublicCeyoRoutinesRoute
   '/api/public/fx': typeof ApiPublicFxRoute
   '/api/public/geo': typeof ApiPublicGeoRoute
-  '/api/public/inngest': typeof ApiPublicInngestRoute
   '/api/public/reminders-tick': typeof ApiPublicRemindersTickRoute
   '/api/public/telegram-keys': typeof ApiPublicTelegramKeysRoute
   '/api/public/agent-tools/$token': typeof ApiPublicAgentToolsTokenRoute
@@ -259,7 +252,6 @@ export interface FileRoutesByTo {
   '/api/public/ceyo-routines': typeof ApiPublicCeyoRoutinesRoute
   '/api/public/fx': typeof ApiPublicFxRoute
   '/api/public/geo': typeof ApiPublicGeoRoute
-  '/api/public/inngest': typeof ApiPublicInngestRoute
   '/api/public/reminders-tick': typeof ApiPublicRemindersTickRoute
   '/api/public/telegram-keys': typeof ApiPublicTelegramKeysRoute
   '/api/public/agent-tools/$token': typeof ApiPublicAgentToolsTokenRoute
@@ -293,7 +285,6 @@ export interface FileRoutesById {
   '/api/public/ceyo-routines': typeof ApiPublicCeyoRoutinesRoute
   '/api/public/fx': typeof ApiPublicFxRoute
   '/api/public/geo': typeof ApiPublicGeoRoute
-  '/api/public/inngest': typeof ApiPublicInngestRoute
   '/api/public/reminders-tick': typeof ApiPublicRemindersTickRoute
   '/api/public/telegram-keys': typeof ApiPublicTelegramKeysRoute
   '/api/public/agent-tools/$token': typeof ApiPublicAgentToolsTokenRoute
@@ -328,7 +319,6 @@ export interface FileRouteTypes {
     | '/api/public/ceyo-routines'
     | '/api/public/fx'
     | '/api/public/geo'
-    | '/api/public/inngest'
     | '/api/public/reminders-tick'
     | '/api/public/telegram-keys'
     | '/api/public/agent-tools/$token'
@@ -361,7 +351,6 @@ export interface FileRouteTypes {
     | '/api/public/ceyo-routines'
     | '/api/public/fx'
     | '/api/public/geo'
-    | '/api/public/inngest'
     | '/api/public/reminders-tick'
     | '/api/public/telegram-keys'
     | '/api/public/agent-tools/$token'
@@ -394,7 +383,6 @@ export interface FileRouteTypes {
     | '/api/public/ceyo-routines'
     | '/api/public/fx'
     | '/api/public/geo'
-    | '/api/public/inngest'
     | '/api/public/reminders-tick'
     | '/api/public/telegram-keys'
     | '/api/public/agent-tools/$token'
@@ -428,7 +416,6 @@ export interface RootRouteChildren {
   ApiPublicCeyoRoutinesRoute: typeof ApiPublicCeyoRoutinesRoute
   ApiPublicFxRoute: typeof ApiPublicFxRoute
   ApiPublicGeoRoute: typeof ApiPublicGeoRoute
-  ApiPublicInngestRoute: typeof ApiPublicInngestRoute
   ApiPublicRemindersTickRoute: typeof ApiPublicRemindersTickRoute
   ApiPublicTelegramKeysRoute: typeof ApiPublicTelegramKeysRoute
   ApiPublicAgentToolsTokenRoute: typeof ApiPublicAgentToolsTokenRoute
@@ -613,13 +600,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicGeoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/inngest': {
-      id: '/api/public/inngest'
-      path: '/api/public/inngest'
-      fullPath: '/api/public/inngest'
-      preLoaderRoute: typeof ApiPublicInngestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/reminders-tick': {
       id: '/api/public/reminders-tick'
       path: '/api/public/reminders-tick'
@@ -684,7 +664,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCeyoRoutinesRoute: ApiPublicCeyoRoutinesRoute,
   ApiPublicFxRoute: ApiPublicFxRoute,
   ApiPublicGeoRoute: ApiPublicGeoRoute,
-  ApiPublicInngestRoute: ApiPublicInngestRoute,
   ApiPublicRemindersTickRoute: ApiPublicRemindersTickRoute,
   ApiPublicTelegramKeysRoute: ApiPublicTelegramKeysRoute,
   ApiPublicAgentToolsTokenRoute: ApiPublicAgentToolsTokenRoute,
