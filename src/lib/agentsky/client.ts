@@ -1,5 +1,6 @@
 /** @doc Browser client for /api/agent/* — the only way the UI talks to the AgentSky agent. */
 import { supabase } from "@/integrations/supabase/client";
+import type { AgentVoiceSettings, RecordingOrigin } from "@/lib/audio/agentVoice";
 import { readEventStream } from "./readEventStream";
 
 export type AgentColor = "aurora" | "ocean" | "ember" | "mint" | "sun" | "rose" | "mono";
@@ -14,6 +15,7 @@ export type AgentInfo = {
   isTemplate?: boolean;
   mediaOnly?: boolean;
   createdAt: string;
+  voiceSettings?: AgentVoiceSettings;
 };
 
 export type MediaModelInfo = {
@@ -66,7 +68,7 @@ function fail(error: any): never {
 }
 function toAgent(b: any, primary: string | null): AgentInfo {
   const color = COLORS.includes(b.look?.color) ? b.look.color : "aurora";
-  return { id: b.id, name: b.name, description: b.description || "", color, prompt: b.instructions || "", isDefault: b.id === primary, createdAt: b.created_at };
+  return { id: b.id, name: b.name, description: b.description || "", color, prompt: b.instructions || "", isDefault: b.id === primary, createdAt: b.created_at, voiceSettings: b.look?.voiceSettings };
 }
 const toSession = (c: any): SessionInfo => ({ id: c.id, agentId: c.bot_id || "", title: c.title || "New chat", status: running.has(c.id) ? "running" : "idle", createdAt: c.created_at });
 
@@ -111,12 +113,12 @@ async function startReply(sessionId: string) {
   })();
 }
 
-async function addUserMessage(sessionId: string, text: string, images: string[] = [], messageId: string = crypto.randomUUID()) {
+async function addUserMessage(sessionId: string, text: string, images: string[] = [], messageId: string = crypto.randomUUID(), origin: RecordingOrigin = {}) {
   const user = await uid();
-  const { data, error } = await db.from("messages").insert({ id: messageId, conversation_id: sessionId, user_id: user, role: "user", content: text, metadata: { images } }).select("id, created_at").single();
+  const { data, error } = await db.from("messages").insert({ id: messageId, conversation_id: sessionId, user_id: user, role: "user", content: text, metadata: { images, ...origin } }).select("id, created_at").single();
   if (error) fail(error);
   const live = running.get(sessionId);
-  const e: RawEvent = { id: data.id, type: "user.message", at: data.created_at, content: [{ type: "text", text }, ...images.map((url) => ({ type: "image", source: { type: "url", url } }))] };
+  const e: RawEvent = { id: data.id, type: "user.message", ...origin, at: data.created_at, content: [{ type: "text", text }, ...images.map((url) => ({ type: "image", source: { type: "url", url } }))] };
   if (live) {
     // The bot is still working: it reads this message mid-run and changes course.
     live.events.push(e);
@@ -152,7 +154,7 @@ async function checkBackgroundJobs() {
 }
 if (typeof window !== "undefined") setInterval(() => void checkBackgroundJobs(), 10000);
 
-const agentInput = (a: { name: string; description: string; prompt: string; color: AgentColor }) => ({ name: a.name, description: a.description, instructions: a.prompt, look: { color: a.color } });
+const agentInput = (a: { name: string; description: string; prompt: string; color: AgentColor; voiceSettings?: AgentVoiceSettings }) => ({ name: a.name, description: a.description, instructions: a.prompt, look: { color: a.color, ...(a.voiceSettings ? { voiceSettings: a.voiceSettings } : {}) } });
 
 export const agentApi = {
   bootstrap: async () => {
@@ -176,14 +178,18 @@ export const agentApi = {
     if (error) fail(error);
     return { ...g, id: data.id, createdAt: data.created_at };
   },
-  createAgent: async (a: { name: string; description: string; prompt: string; color: AgentColor }) => {
+  createAgent: async (a: { name: string; description: string; prompt: string; color: AgentColor; voiceSettings?: AgentVoiceSettings }) => {
     const user = await uid();
     const { data, error } = await db.from("bots").insert({ owner_id: user, ...agentInput(a) }).select("*").single();
     if (error) fail(error);
     return { agent: toAgent(data, null) };
   },
-  updateAgent: async (id: string, a: { name: string; description: string; prompt: string; color: AgentColor }) => {
-    const { data, error } = await db.from("bots").update(agentInput(a)).eq("id", id).select("*").single();
+  updateAgent: async (id: string, a: { name: string; description: string; prompt: string; color: AgentColor; voiceSettings?: AgentVoiceSettings }) => {
+    const user = await uid();
+    const { data: current, error: readError } = await db.from("bots").select("look").eq("id", id).eq("owner_id", user).single();
+    if (readError) fail(readError);
+    const input = agentInput(a);
+    const { data, error } = await db.from("bots").update({ ...input, look: { ...current.look, ...input.look } }).eq("id", id).select("*").single();
     if (error) fail(error);
     return { agent: toAgent(data, null) };
   },
@@ -205,12 +211,12 @@ export const agentApi = {
     if (error) fail(error);
     return { sessions: (data ?? []).map(toSession) };
   },
-  createSession: async (p: { agentId?: string; text: string; images?: string[]; messageId?: string }) => {
+  createSession: async (p: { agentId?: string; text: string; images?: string[]; messageId?: string; origin?: RecordingOrigin }) => {
     const user = await uid();
     const { data: group } = await db.from("bot_groups").select("id").eq("owner_id", user).eq("coordinator_id", p.agentId || "").maybeSingle();
     const { data, error } = await db.from("conversations").insert({ user_id: user, bot_id: p.agentId || null, group_id: group?.id || null, title: p.text.slice(0, 60) || "New chat" }).select("*").single();
     if (error) fail(error);
-    await addUserMessage(data.id, p.text, p.images, p.messageId);
+    await addUserMessage(data.id, p.text, p.images, p.messageId, p.origin);
     return { session: { ...toSession(data), status: "running" } as SessionInfo };
   },
   session: async (id: string) => {
@@ -237,7 +243,7 @@ export const agentApi = {
       if (m.role === "user") {
         if (embeddedUsers.has(m.id)) continue;
         const imgs: string[] = Array.isArray(m.metadata?.images) ? m.metadata.images : [];
-        events.push({ id: m.id, type: "user.message", at: m.created_at, content: [{ type: "text", text: m.content }, ...imgs.map((url) => ({ type: "image", source: { type: "url", url } }))] });
+        events.push({ id: m.id, type: "user.message", voiceOrigin: m.metadata?.voiceOrigin, recordingId: m.metadata?.recordingId, at: m.created_at, content: [{ type: "text", text: m.content }, ...imgs.map((url) => ({ type: "image", source: { type: "url", url } }))] });
       } else {
         if (Array.isArray(m.metadata?.transcript)) {
           events.push(...m.metadata.transcript);
@@ -254,7 +260,7 @@ export const agentApi = {
     const ids = new Set(events.map((event) => event.id));
     return { events: [...events, ...(live?.events || []).filter((event) => !ids.has(event.id))], status: live ? "running" : "idle" };
   },
-  send: (id: string, text: string, images?: string[], messageId?: string) => addUserMessage(id, text, images, messageId),
+  send: (id: string, text: string, images?: string[], messageId?: string, origin?: RecordingOrigin) => addUserMessage(id, text, images, messageId, origin),
   interrupt: async (id: string) => {
     running.get(id)?.ctl.abort();
     return { status: "idle" };
@@ -277,6 +283,8 @@ export type RawEvent = {
   id: string;
   type: string;
   at?: string;
+  voiceOrigin?: "recording";
+  recordingId?: string;
   parts?: any[];
   part?: any;
   content?: any[];

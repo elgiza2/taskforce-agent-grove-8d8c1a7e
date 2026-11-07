@@ -31,7 +31,7 @@ export type Card =
 const DELIVERABLE = /\.(md|txt|csv|tsv|json|html?|xml|ya?ml|py|js|ts|tsx|jsx|css|sql|sh|svg)$/i;
 const MAX_INLINE = 400_000;
 
-export type UserTurn = { type: "user"; id: string; text: string; images: string[]; at?: string };
+export type UserTurn = { type: "user"; id: string; text: string; images: string[]; at?: string; voiceOrigin?: "recording"; recordingId?: string };
 export type AgentTurn = {
   type: "agent";
   id: string;
@@ -250,7 +250,7 @@ function reasoningTitle(text: string, lang: Lang, done: boolean) {
 /* ---------- builder ---------- */
 
 type Flat =
-  | { k: "user"; id: string; text: string; images: string[]; at?: string }
+  | { k: "user"; id: string; text: string; images: string[]; at?: string; voiceOrigin?: "recording"; recordingId?: string }
   | { k: "text"; id: string; stream: string; text: string }
   | { k: "reasoning"; id: string; stream: string; text: string }
   | { k: "call"; id: string; callId: string; name: string; args: any }
@@ -296,7 +296,7 @@ function flatten(events: RawEvent[]): Flat[] {
     switch (e.type) {
       case "user.message": {
         const u = userText(e.content);
-        out.push({ k: "user", id: e.id, text: u.text, images: u.images, at: e.at });
+        out.push({ k: "user", id: e.id, text: u.text, images: u.images, at: e.at, voiceOrigin: e.voiceOrigin, recordingId: e.recordingId });
         break;
       }
       case "agent.message":
@@ -367,7 +367,7 @@ export function buildTranscript(events: RawEvent[], lang: Lang, running: boolean
         // A message sent mid-run steers the same run; keep the agent turn open after it.
         const wasRunning = !!cur;
         if (cur) close();
-        turns.push({ type: "user", id: f.id, text: f.text, images: f.images, at: f.at });
+        turns.push({ type: "user", id: f.id, text: f.text, images: f.images, at: f.at, voiceOrigin: f.voiceOrigin, recordingId: f.recordingId });
         if (wasRunning) {
           cur = null;
           agent();
