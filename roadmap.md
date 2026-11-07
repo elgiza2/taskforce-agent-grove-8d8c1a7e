@@ -1,7 +1,7 @@
 # Roadmap
 
 ## Current completion pass — 2026-11-07 08:23 UTC
-- [ ] Reconnect Telegram in the new workspace; disregard previous workspace connection IDs and reverify webhook configuration.
+- [ ] Replace the cancelled Telegram connector request with independent Supabase-backed token storage and direct Telegram calls; never store new credentials in Lovable. Supersedes reconnection after the owner's updated instruction.
 - [ ] Verify the newly supplied provider keys with real signed-in chat, web reading and background delivery; record actual outcomes, not configuration assumptions.
 - [ ] Harden first-run account loading and retry-safe primary-bot creation; align onboarding with existing restrained theme.
 - [ ] Replace the stale README with an accurate successor-agent guide covering routing, data flow, encryption limits, operations and verification.
