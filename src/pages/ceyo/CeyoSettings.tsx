@@ -27,13 +27,13 @@ import "@/styles/ceyo.css";
 
 type Nav = (to: string) => void;
 
-function Shell({ title, back, children, action }: { title: string; back: () => void; children: ReactNode; action?: ReactNode }) {
+function Shell({ title, back, children, action, className = "" }: { title: string; back: () => void; children: ReactNode; action?: ReactNode; className?: string }) {
   return (
-    <div key={title} className="agent-hub ceyo-page" data-no-translate>
+    <div key={title} className={`agent-hub ceyo-page ${className}`} data-no-translate>
       <header className="ceyo-top">
-        <button type="button" className="gx-round" aria-label={title === "Settings" ? "Close" : "Back"} onClick={back}>
+        <Button variant="ghost" size="icon" type="button" className="gx-round" aria-label={title === "Settings" ? "Close" : "Back"} onClick={back}>
           {title === "Settings" ? <X size={20} /> : <ChevronLeft size={20} />}
-        </button>
+        </Button>
         {title !== "Settings" && <h1>{title}</h1>}
         <span className="ceyo-top-action">{action}</span>
       </header>
@@ -312,15 +312,15 @@ function Plans({ nav }: { nav: Nav }) {
   const current = plan?.toLowerCase() === p.id;
   return (
     <div className="agent-hub ceyo-page ceyo-plans" data-no-translate>
-      <button type="button" className="gx-round ceyo-plans-close" aria-label="Close" onClick={() => nav("/settings")}><X size={20} /></button>
+      <Button variant="ghost" size="icon" type="button" className="gx-round ceyo-plans-close" aria-label="Close" onClick={() => nav("/settings")}><X size={20} /></Button>
       <div className="ceyo-scroll">
-        <div className="ceyo-plans-brand"><span className="ceyo-brand-orb"><i /><i /></span></div>
+        <div className="ceyo-plans-brand"><span className="ceyo-brand-orb" aria-hidden="true"><i /><i /></span><span className="ceyo-plans-brand-name">Ceyo</span></div>
         <h1 className="ceyo-plans-title">One subscription.<br />Access to everything.</h1>
         <div className="ceyo-plans-card">
-          <div className="ceyo-plans-tabs">
-            {PLANS.map((x, i) => <button key={x.id} type="button" data-on={i === tab} onClick={() => { setTab(i); setYearly(false); }}>{x.name}</button>)}
+          <div className="ceyo-plans-tabs" role="tablist" aria-label="Plans">
+            {PLANS.map((x, i) => <Button variant="ghost" key={x.id} type="button" role="tab" aria-selected={i === tab} data-on={i === tab} onClick={() => { setTab(i); setYearly(false); }}>{x.name}</Button>)}
           </div>
-          {p.base && <p className="ceyo-plans-muted">Everything in {p.base}, and:</p>}
+          {p.base && <p className="ceyo-plans-muted ceyo-plans-base">Everything in {p.base}, and:</p>}
           <strong className="ceyo-plans-mult">{p.mult}</strong>
           <p className="ceyo-plans-sub">more usage than Free</p>
           {p.groups.map((g) => <div key={g.title}>
@@ -329,15 +329,15 @@ function Plans({ nav }: { nav: Nav }) {
           </div>)}
           <p className="ceyo-plans-muted ceyo-plans-gt">Our other apps</p>
           <ul><li className="ceyo-plans-muted">Coming soon</li></ul>
-        </div>
-      </div>
       <div className="ceyo-plans-foot">
         <div className="ceyo-plans-prices">
-          <button type="button" data-on={!yearly} onClick={() => setYearly(false)}><b>${p.price}</b> <span>{p.yearly ? "monthly" : "billed monthly"}</span></button>
-          {p.yearly > 0 && <button type="button" data-on={yearly} onClick={() => setYearly(true)}><b>${p.yearly}</b> <span>yearly</span><small>${(p.yearly / 12).toFixed(2)}/mo · <em>Save 17%</em></small></button>}
+          <Button variant="ghost" type="button" aria-pressed={!yearly} data-on={!yearly} onClick={() => setYearly(false)}><b>${p.price}</b> <span>{p.yearly ? "monthly" : "billed monthly"}</span></Button>
+          {p.yearly > 0 && <Button variant="ghost" type="button" aria-pressed={yearly} data-on={yearly} onClick={() => setYearly(true)}><b>${p.yearly}</b> <span>yearly</span><small>${(p.yearly / 12).toFixed(2)}/mo · <em>Save 17%</em></small></Button>}
         </div>
-        <button type="button" className="ceyo-plans-cta" data-current={current} disabled={current} onClick={() => toast("Payments are coming soon")}>{current ? "Current plan" : "Change plan"}</button>
+        <Button variant="ghost" type="button" className="ceyo-plans-cta" data-current={current} disabled={current} onClick={() => toast("Payments are coming soon")}>{current ? "Current plan" : "Change plan"}</Button>
         <p className="ceyo-plans-legal">Subscriptions renew automatically until cancelled. Cancel anytime at least 24 hours before renewal. Prices may change.</p>
+      </div>
+        </div>
       </div>
     </div>
   );
@@ -379,30 +379,26 @@ function Vault_({ nav }: { nav: Nav }) {
   const openAdd = (kind: VaultItem["kind"]) => { setAdding(kind); setMenu(false); setTitle(""); setDetail(""); };
   return (
     <Shell
-      title="Vault"
-      back={() => nav("/settings")}
-      action={<div className="hub-plus-wrap" ref={menuRef}>
-        <button type="button" className="gx-round" aria-label="Add vault item" onClick={() => setMenu((value) => !value)}><Plus size={21} /></button>
+      className="ceyo-vault"
+      title={adding ? `New ${labels[adding].toLowerCase()}` : "Vault"}
+      back={() => adding ? setAdding(null) : nav("/settings")}
+      action={!adding && <div className="hub-plus-wrap" ref={menuRef}>
+        <Button variant="ghost" size="icon" type="button" className="gx-round" aria-label="Add vault item" aria-expanded={menu} onClick={() => setMenu((value) => !value)}><Plus size={21} /></Button>
         {menu && <div className="hub-menu hub-plus-menu ceyo-vault-menu" role="menu">
-          <button type="button" onClick={() => openAdd("login")}><KeyRound size={17} />Login</button>
-          <button type="button" onClick={() => openAdd("card")}><CreditCard size={17} />Card</button>
-          <button type="button" onClick={() => openAdd("contact")}><User size={17} />Contact info</button>
+          <Button variant="ghost" type="button" role="menuitem" onClick={() => openAdd("login")}><KeyRound size={17} />Login</Button>
+          <Button variant="ghost" type="button" role="menuitem" onClick={() => openAdd("card")}><CreditCard size={17} />Card</Button>
+          <Button variant="ghost" type="button" role="menuitem" onClick={() => openAdd("contact")}><User size={17} />Contact info</Button>
         </div>}
       </div>}
     >
-      <div className="ceyo-vault-hero">
-        <span className="ceyo-vault-hero-icon"><Vault size={26} /></span>
-        <div><strong>{items.length} saved {items.length === 1 ? "item" : "items"}</strong><small>Private to this device and account</small></div>
-      </div>
-      <div className="ceyo-vault-tiles">
-        {([["login", "Logins", <KeyRound size={20} />], ["card", "Payments", <CreditCard size={20} />], ["contact", "Contacts", <User size={20} />]] as const).map(([kind, name, icon]) => (
-          <button type="button" key={kind} data-active={tab === kind} onClick={() => setTab(tab === kind ? "all" : kind)}>
-            <span className="ceyo-vault-tile-icon">{icon}</span><strong>{name}</strong><small>{count(kind)}</small>
-            <i role="button" aria-label={`Add ${name}`} onClick={(event) => { event.stopPropagation(); openAdd(kind); }}><Plus size={14} /></i>
-          </button>
+      {!adding && <div className="ceyo-vault-tabs" role="tablist" aria-label="Vault categories">
+        {([["all", "All"], ["login", "Logins"], ["card", "Payments"], ["contact", "Contact info"]] as const).map(([kind, name]) => (
+          <Button variant="ghost" type="button" role="tab" aria-selected={tab === kind} key={kind} data-active={tab === kind} onClick={() => setTab(kind)}>
+            {name}<span>{kind === "all" ? items.length : count(kind)}</span>
+          </Button>
         ))}
-      </div>
-      {adding && <form className="ceyo-card ceyo-vault-form" onSubmit={(event) => {
+      </div>}
+      {adding && <form className="ceyo-vault-editor" onSubmit={(event) => {
         event.preventDefault();
         if (!title.trim()) return;
         try { validateVaultDetail(adding, detail); } catch (error) { toast.error(error instanceof Error ? error.message : "Invalid details"); return; }
@@ -410,19 +406,21 @@ function Vault_({ nav }: { nav: Nav }) {
         setAdding(null);
         toast.success("Saved to your vault");
       }}>
-        <strong>New {labels[adding].toLowerCase()}</strong>
-        <input className="ceyo-input" aria-label="Title" maxLength={100} placeholder={adding === "login" ? "Website" : adding === "card" ? "Card name" : "Name"} value={title} onChange={(event) => setTitle(event.target.value)} autoFocus />
-        <input className="ceyo-input" aria-label="Details" maxLength={adding === "card" ? 4 : 160} inputMode={adding === "card" ? "numeric" : "text"} pattern={adding === "card" ? "[0-9]{4}" : undefined} placeholder={adding === "login" ? "Username or email" : adding === "card" ? "Last 4 digits" : "Phone or address"} value={detail} onChange={(event) => setDetail(event.target.value)} />
-        <div className="hub-form-footer"><button type="submit" className="hub-button hub-button-primary">Save</button><button type="button" className="hub-button hub-button-secondary" onClick={() => setAdding(null)}>Cancel</button></div>
+        <div className="ceyo-vault-fields">
+          <label className="ceyo-vault-field"><span>{adding === "login" ? "Website" : adding === "card" ? "Card name" : "Label"}</span><input aria-label="Title" maxLength={100} placeholder={adding === "login" ? "example.com" : adding === "card" ? "e.g. Travel" : "e.g. Home"} value={title} onChange={(event) => setTitle(event.target.value)} autoFocus /></label>
+          <label className="ceyo-vault-field"><span>{adding === "login" ? "Username or email" : adding === "card" ? "Last 4 digits" : "Contact details"}</span><input aria-label="Details" maxLength={adding === "card" ? 4 : 160} inputMode={adding === "card" ? "numeric" : "text"} pattern={adding === "card" ? "[0-9]{4}" : undefined} placeholder={adding === "login" ? "name@example.com" : adding === "card" ? "1234" : "Phone, email or address"} value={detail} onChange={(event) => setDetail(event.target.value)} /></label>
+        </div>
+        <p className="ceyo-vault-note">{adding === "card" ? "Only the last four digits are saved. Never enter a full card number or security code." : "Saved on this device, privately for your account."}</p>
+        <Button variant="ghost" type="submit" className="ceyo-vault-save" disabled={!title.trim()}>{adding === "card" ? "Add card" : adding === "contact" ? "Save contact info" : "Save login"}</Button>
       </form>}
-      {shown.length > 0 && <div className="ceyo-vault-list">{shown.map((item) => <div className="ceyo-vault-row" key={item.id}>
+      {!adding && shown.length > 0 && <div className="ceyo-vault-list">{shown.map((item) => <div className="ceyo-vault-row" key={item.id}>
         <span className="ceyo-row-icon">{item.kind === "card" ? <CreditCard size={18} /> : item.kind === "login" ? <KeyRound size={18} /> : <User size={18} />}</span>
         <span><strong>{item.title}</strong><small>{item.detail}</small></span>
-        <button type="button" aria-label={`Delete ${item.title}`} onClick={() => save(items.filter((candidate) => candidate.id !== item.id))}><Trash2 size={16} /></button>
+        <Button variant="ghost" size="icon" type="button" aria-label={`Delete ${item.title}`} onClick={() => save(items.filter((candidate) => candidate.id !== item.id))}><Trash2 size={16} /></Button>
       </div>)}</div>}
       {!shown.length && !adding && <div className="hub-empty-state"><span className="hub-empty-icon"><Vault size={22} /></span><strong>{items.length ? "No matching items" : "Your vault is empty"}</strong><p>{items.length ? "Try another search or category." : "Add a login, card label or contact info from the + button."}</p></div>}
-      <p className="ceyo-vault-note">Ceyo never stores a saved card's full number or security code. Logins and contact info are saved on this device.</p>
-      <div className="ceyo-bottom-search"><Search size={17} /><input aria-label="Search Vault" placeholder="Search Vault" value={query} onChange={(event) => setQuery(event.target.value)} /></div>
+      {!adding && <><p className="ceyo-vault-note">Ceyo never stores a saved card's full number or security code. Logins and contact info are saved on this device.</p>
+      <div className="ceyo-bottom-search"><Search size={20} /><input aria-label="Search Vault" placeholder="Search Vault" value={query} onChange={(event) => setQuery(event.target.value)} /></div></>}
     </Shell>
   );
 }

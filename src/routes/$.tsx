@@ -7,10 +7,11 @@ export const Route = createFileRoute("/$")({
   ssr: false,
   component: SpaMount,
   head: ({ params }) => {
-    const section = String(params._splat || "Workspace").split("/")[0].replace(/[-_]/g, " ");
+    const path = String(params._splat || "Workspace");
+    const section = (path === "settings/plans" || path === "pricing" ? "Plans" : path === "settings/vault" ? "Vault" : path.split("/")[0]).replace(/[-_]/g, " ");
     const name = section.charAt(0).toUpperCase() + section.slice(1);
     const title = `${name} — Ceyo`;
-    const description = `Explore ${name.toLowerCase()} in Ceyo, your workspace for creating and getting work done.`;
+    const description = section === "Plans" ? "Compare Ceyo Plus, Pro and Ultra subscriptions and monthly or yearly pricing." : section === "Vault" ? "Your account's saved login labels, payment card labels and contact information in Ceyo." : `Explore ${name.toLowerCase()} in Ceyo, your workspace for creating and getting work done.`;
     return {
       meta: [
         { title },
