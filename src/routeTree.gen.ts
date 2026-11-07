@@ -11,6 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SplatRouteImport } from './routes/$'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SecurityRouteImport } from './routes/security'
+import { Route as SubscriptionTermsRouteImport } from './routes/subscription-terms'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ApiAnythingRouteImport } from './routes/api/anything'
 import { Route as ApiCeyoChatRouteImport } from './routes/api/ceyo-chat'
 import { Route as ApiCeyoTaskRouteImport } from './routes/api/ceyo-task'
@@ -48,6 +55,41 @@ const IndexRoute = IndexRouteImport.update({
 const SplatRoute = SplatRouteImport.update({
   id: '/$',
   path: '/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SecurityRoute = SecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubscriptionTermsRoute = SubscriptionTermsRouteImport.update({
+  id: '/subscription-terms',
+  path: '/subscription-terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAnythingRoute = ApiAnythingRouteImport.update({
@@ -197,6 +239,13 @@ const ApiPublicMediaRunIdIndexRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
+  '/privacy': typeof PrivacyRoute
+  '/security': typeof SecurityRoute
+  '/subscription-terms': typeof SubscriptionTermsRoute
+  '/terms': typeof TermsRoute
   '/api/anything': typeof ApiAnythingRoute
   '/api/ceyo-chat': typeof ApiCeyoChatRoute
   '/api/ceyo-task': typeof ApiCeyoTaskRoute
@@ -229,6 +278,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
+  '/privacy': typeof PrivacyRoute
+  '/security': typeof SecurityRoute
+  '/subscription-terms': typeof SubscriptionTermsRoute
+  '/terms': typeof TermsRoute
   '/api/anything': typeof ApiAnythingRoute
   '/api/ceyo-chat': typeof ApiCeyoChatRoute
   '/api/ceyo-task': typeof ApiCeyoTaskRoute
@@ -262,6 +318,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
+  '/privacy': typeof PrivacyRoute
+  '/security': typeof SecurityRoute
+  '/subscription-terms': typeof SubscriptionTermsRoute
+  '/terms': typeof TermsRoute
   '/api/anything': typeof ApiAnythingRoute
   '/api/ceyo-chat': typeof ApiCeyoChatRoute
   '/api/ceyo-task': typeof ApiCeyoTaskRoute
@@ -296,6 +359,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/$'
+    | '/about'
+    | '/contact'
+    | '/cookies'
+    | '/privacy'
+    | '/security'
+    | '/subscription-terms'
+    | '/terms'
     | '/api/anything'
     | '/api/ceyo-chat'
     | '/api/ceyo-task'
@@ -328,6 +398,13 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/$'
+    | '/about'
+    | '/contact'
+    | '/cookies'
+    | '/privacy'
+    | '/security'
+    | '/subscription-terms'
+    | '/terms'
     | '/api/anything'
     | '/api/ceyo-chat'
     | '/api/ceyo-task'
@@ -360,6 +437,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/$'
+    | '/about'
+    | '/contact'
+    | '/cookies'
+    | '/privacy'
+    | '/security'
+    | '/subscription-terms'
+    | '/terms'
     | '/api/anything'
     | '/api/ceyo-chat'
     | '/api/ceyo-task'
@@ -393,6 +477,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
+  AboutRoute: typeof AboutRoute
+  ContactRoute: typeof ContactRoute
+  CookiesRoute: typeof CookiesRoute
+  PrivacyRoute: typeof PrivacyRoute
+  SecurityRoute: typeof SecurityRoute
+  SubscriptionTermsRoute: typeof SubscriptionTermsRoute
+  TermsRoute: typeof TermsRoute
   ApiAnythingRoute: typeof ApiAnythingRoute
   ApiCeyoChatRoute: typeof ApiCeyoChatRoute
   ApiCeyoTaskRoute: typeof ApiCeyoTaskRoute
@@ -437,6 +528,55 @@ declare module '@tanstack/react-router' {
       path: '/$'
       fullPath: '/$'
       preLoaderRoute: typeof SplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/security': {
+      id: '/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof SecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subscription-terms': {
+      id: '/subscription-terms'
+      path: '/subscription-terms'
+      fullPath: '/subscription-terms'
+      preLoaderRoute: typeof SubscriptionTermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/anything': {
@@ -641,6 +781,13 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
+  AboutRoute: AboutRoute,
+  ContactRoute: ContactRoute,
+  CookiesRoute: CookiesRoute,
+  PrivacyRoute: PrivacyRoute,
+  SecurityRoute: SecurityRoute,
+  SubscriptionTermsRoute: SubscriptionTermsRoute,
+  TermsRoute: TermsRoute,
   ApiAnythingRoute: ApiAnythingRoute,
   ApiCeyoChatRoute: ApiCeyoChatRoute,
   ApiCeyoTaskRoute: ApiCeyoTaskRoute,
