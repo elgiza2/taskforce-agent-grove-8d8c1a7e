@@ -35,6 +35,9 @@ import { useAgentSession } from "@/hooks/useAgentSession";
 import { MediaCard, PlanCard, TaskCard, VideoProposalCard } from "@/components/agent/Cards";
 import { VoiceCallBar } from "./VoiceCall";
 import { VoiceMessage } from "./VoiceControls";
+import { FilePreview, AttachmentPreview } from "./FilePreview";
+import { MediaCreator } from "./MediaCreator";
+import "@/styles/chat-previews.css";
 import { prefersVoiceReply, type AgentVoiceSettings, type RecordingOrigin } from "@/lib/audio/agentVoice";
 import { cacheRecording } from "@/lib/audio/recordingCache";
 import { microphoneRecording, transcribeRecording } from "@/lib/audio/voiceClient";
@@ -107,6 +110,7 @@ function Composer({
 }) {
   const [text, setText] = useState("");
   const [plusOpen, setPlusOpen] = useState(false);
+  const [mediaCreator, setMediaCreator] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const fileIn = useRef<HTMLInputElement>(null);
@@ -184,6 +188,8 @@ function Composer({
       {replyTo && (
         <div className="cx-reply-chip"><Reply size={14} /><span dir="auto">{replyTo}</span><button type="button" aria-label="Cancel reply" onClick={onCancelReply}><X size={14} /></button></div>
       )}
+      {mediaCreator && <MediaCreator ar={ar} onClose={() => setMediaCreator(false)} />}
+      {files.map((file, i) => <AttachmentPreview key={`preview-${i}`} file={file} />)}
       {files.length > 0 && (
         <div className="cx-files">{files.map((f, i) => <span key={`${f.name}-${i}`} className="cx-file-chip"><Paperclip size={13} /><span>{f.name}</span><button type="button" aria-label="Remove file" onClick={() => setFiles((c) => c.filter((_, j) => j !== i))}><X size={13} /></button></span>)}</div>
       )}
@@ -199,6 +205,7 @@ function Composer({
               <button type="button" onClick={() => { fileIn.current?.click(); setPlusOpen(false); }}><Paperclip size={18} />{ar ? "اختيار ملف" : "Choose File"}</button>
               <button type="button" onClick={() => { camIn.current?.click(); setPlusOpen(false); }}><Camera size={18} />{ar ? "التقاط صورة" : "Take Photo"}</button>
               <button type="button" onClick={() => { mediaIn.current?.click(); setPlusOpen(false); }}><ImageIcon size={18} />{ar ? "صورة أو فيديو" : "Photo or Video"}</button>
+              <Button variant="ghost" role="menuitem" onClick={() => { setMediaCreator(true); setPlusOpen(false); }}><ImageIcon size={18} />{ar ? "إنشاء صور وفيديو" : "Create media"}</Button>
             </div>
           )}
         </div>
@@ -533,6 +540,7 @@ export function HubChat({
                         {b.lastPart && b.turn.cards?.map((card: any) => {
                           if (card.kind === "agent-proposal") return <AgentProposalCard key={card.id} proposal={card.proposal} />;
                           if (card.kind === "media") return <MediaCard key={card.id} media={card.media} lang={lang} />;
+                          if (card.kind === "file") return <FilePreview key={card.id} id={card.id} name={card.name} content={card.content} />;
                           if (card.kind === "video") return <VideoProposalCard key={card.id} proposal={card.proposal} models={models} tier={tier} lang={lang} onUpgrade={() => nav("/pricing")} />;
                           if (card.kind === "question") return <ChoiceCard key={card.id} question={card.question} options={card.options} allowFreeText={card.allowFreeText} answered={card.answered} ar={ar} onAnswer={(v) => s.send(v)} />;
                           if (card.kind === "widget") {

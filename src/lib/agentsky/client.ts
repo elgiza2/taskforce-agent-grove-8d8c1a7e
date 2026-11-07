@@ -312,7 +312,7 @@ export const agentApi = {
 };
 
 export async function mediaStatus(runId: string, token: string) {
-  const response = await fetch(`/api/public/media-status/${encodeURIComponent(runId)}?s=${encodeURIComponent(token)}`);
+  const response = await fetch(`/api/public/media-status/${encodeURIComponent(runId)}?t=${encodeURIComponent(token)}`);
   const body = await response.json();
   if (!response.ok) throw new AgentApiError(response.status, "media_status_failed", body.error || "Could not check media");
   return body as { status: string; urls: string[]; error?: string };
