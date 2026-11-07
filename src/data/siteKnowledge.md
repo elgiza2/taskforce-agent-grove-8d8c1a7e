@@ -4,7 +4,7 @@
 ---
 
 ## Company Identity (used across all pages)
-- **Legal name:** Ceyo for Digital Platforms & E-Commerce Development LLC
+- **Legal name:** Megsy LLC
 - **Incorporated:** Arab Republic of Egypt
 - **Commercial Registry:** 248691
 - **Tax ID:** 774034785
@@ -230,7 +230,7 @@
 
 ### /privacy — Privacy Policy
 - Last updated: 19 May 2026
-- Data controller: Ceyo for Digital Platforms & E-Commerce Development LLC (CR 248691, Tax 774034785)
+- Data controller: Megsy LLC (CR 248691, Tax 774034785)
 - Data collected: account data, workspace data, content data (prompts/files/outputs), usage data, billing data (last four digits only — no full card numbers)
 - Ceyo does NOT sell personal data; does NOT share for cross-context behavioural advertising
 - Account data retained while active and up to 24 months after closure (longer if legally required, e.g. tax records)
@@ -362,7 +362,7 @@
 ### /legal/dmca — DMCA Policy
 - Last updated: 19 May 2026
 - Complies with US DMCA 1998, EU Directive 2019/790
-- **Designated Agent:** Ceyo for Digital Platforms & E-Commerce Development LLC
+- **Designated Agent:** Megsy LLC
 - Copyright Agent contact: @Torekr on Telegram
 - Address: 58 El-Hegaz St., Amoun Tower, Unit 84, Floor 8, Sheraton Al-Matar, Al-Nozha District, Cairo Governorate, Egypt
 - Takedown notice must include: signature, identification of copyrighted work, identification of infringing material (URL), your full contact info, good-faith belief statement, perjury statement
@@ -374,7 +374,7 @@
 
 ### /cookies — Cookie Policy
 - Last updated: 19 May 2026
-- Data controller: Ceyo for Digital Platforms & E-Commerce Development LLC (CR 248691, Tax 774034785)
+- Data controller: Megsy LLC (CR 248691, Tax 774034785)
 - Cookie questions: @Torekr on Telegram
 - **Essential cookies:** session ID (sb-auth-token), auth state, CSRF token, cookie consent prefs, security headers; retention: session or up to 30 days for persistent login; CANNOT be disabled
 - **Analytics cookies:** anonymized/aggregated; no PII; legal basis: consent (GDPR Art. 6(1)(a)); retention: up to 12 months
