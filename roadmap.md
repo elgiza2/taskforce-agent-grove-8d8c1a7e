@@ -1,5 +1,10 @@
 # Roadmap
 
+## Pricing and Vault reference redesign
+- [x] Match pricing layout and selection controls to the supplied screenshots without changing prices or payment behavior.
+- [x] Match Vault categories, list and add-item forms to the supplied screenshots while retaining account-scoped safe storage.
+- [x] Verify mobile/desktop appearance in an isolated rendering of the actual components; plan switching, safe card-label add and search passed, along with nine existing tests. Real-account checks remain unavailable for the external unmanaged backend.
+
 ## Complete audited gaps — current request
 - [x] Repair persistent memory; imported fact persisted after reload and was recalled through signed-in chat.
 - [x] Send actual text/code/CSV/JSON contents; uploaded CSV read correctly and downloaded contents matched. Binary image/video/PDF analysis remains blocked on a supported analysis service.

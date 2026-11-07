@@ -29,3 +29,4 @@
 - Current agents share owner-scoped agent_memories and agent_documents; file references require read_file and unsupported binaries must be rejected. Why: keep recall and actual document contents consistent across primary and specialist chats.
 - Daily/weekly agent_routines use a database lease, unique scheduled run and signed operator endpoint, pause on failures, and deliver through deterministic message IDs. Why: avoid duplicate work and false scheduled success.
 - The central loop rejects empty finals and exhausted step budgets; specialist tool events persist and interactive cards reach the caller. Why: incomplete tool work must not appear completed.
+- Pricing and Vault presentation overrides are scoped in a shared stylesheet loaded after legacy styles; Vault editors retain the existing account-scoped data shape and last-four-only card validation. Why: reference styling must not alter other settings or expand sensitive-data storage.
