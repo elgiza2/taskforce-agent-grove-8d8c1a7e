@@ -132,28 +132,42 @@ async function addUserMessage(sessionId: string, text: string, images: string[] 
 
 /* Background jobs: check unfinished ones and tell open chats when a result lands. */
 const changeSubs = new Set<(sessionId: string) => void>();
+let jobTimer: ReturnType<typeof setInterval> | undefined;
+const deliveredJobs = new Set<string>();
 export function onSessionChanged(fn: (sessionId: string) => void) {
   changeSubs.add(fn);
-  return () => { changeSubs.delete(fn); };
+  if (!jobTimer && typeof window !== "undefined") {
+    void checkBackgroundJobs();
+    jobTimer = setInterval(() => void checkBackgroundJobs(), 10000);
+  }
+  return () => {
+    changeSubs.delete(fn);
+    if (!changeSubs.size && jobTimer) { clearInterval(jobTimer); jobTimer = undefined; }
+  };
 }
 let polling = false;
 async function checkBackgroundJobs() {
-  if (polling) return;
+  if (polling || !changeSubs.size || document.visibilityState !== "visible") return;
   polling = true;
   try {
     const { data } = await supabase.auth.getSession();
     const token = data.session?.access_token;
     if (!token) return;
-    const { data: rows } = await db.from("agent_jobs").select("id").in("status", ["queued", "running"]).limit(10);
+    const { data: rows } = await db.from("agent_jobs").select("id,status,conversation_id").order("created_at", { ascending: false }).limit(20);
     for (const r of rows ?? []) {
+      if (deliveredJobs.has(r.id)) continue;
+      if (["completed", "failed", "cancelled"].includes(r.status)) {
+        deliveredJobs.add(r.id);
+        changeSubs.forEach((f) => f(r.conversation_id));
+        continue;
+      }
       const res = await fetch("/api/ceyo-task", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ jobId: r.id }) });
       if (!res.ok) continue;
       const j = await res.json().catch(() => ({}));
-      if (j?.done && j.conversationId) changeSubs.forEach((f) => f(j.conversationId));
+      if (j?.done && j.conversationId) { deliveredJobs.add(r.id); changeSubs.forEach((f) => f(j.conversationId)); }
     }
   } catch { /* try again next tick */ } finally { polling = false; }
 }
-if (typeof window !== "undefined") setInterval(() => void checkBackgroundJobs(), 10000);
 
 const agentInput = (a: { name: string; description: string; prompt: string; color: AgentColor; voiceSettings?: AgentVoiceSettings }) => ({ name: a.name, description: a.description, instructions: a.prompt, look: { color: a.color, ...(a.voiceSettings ? { voiceSettings: a.voiceSettings } : {}) } });
 
