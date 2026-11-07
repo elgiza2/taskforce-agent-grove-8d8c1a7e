@@ -83,7 +83,7 @@ async function signOut(nav: Nav) {
   try {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
-    nav("/welcome");
+    nav("/auth?mode=signup");
   } catch (error) {
     toast.error(error instanceof Error ? error.message : "Could not sign out");
   }

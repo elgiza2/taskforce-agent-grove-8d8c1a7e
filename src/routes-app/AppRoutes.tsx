@@ -20,7 +20,6 @@ import {
   AgentHubPage,
 } from "./lazyPages";
 
-const CeyoLanding = lazy(() => import("@/pages/ceyo/CeyoLanding"));
 const OnboardingPage = lazy(() => import("@/pages/onboarding/OnboardingPage"));
 const CeyoSettings = lazy(() => import("@/pages/ceyo/CeyoSettings"));
 
@@ -32,8 +31,8 @@ export const AppRoutes = (_props: { currentUserId: string | null }) => (
   <>
     <Route path="/" element={guard(<OnboardingGate><AgentHubPage /></OnboardingGate>, "/auth?mode=signup")} />
     <Route path="/index" element={guard(<OnboardingGate><AgentHubPage /></OnboardingGate>, "/auth?mode=signup")} />
-    <Route path="/welcome" element={<CeyoLanding />} />
-    <Route path="/landing" element={<CeyoLanding />} />
+    <Route path="/welcome" element={<Navigate to="/auth?mode=signup" replace />} />
+    <Route path="/landing" element={<Navigate to="/auth?mode=signup" replace />} />
     <Route path="/onboarding" element={guard(<OnboardingPage />)} />
 
     <Route element={<AnimatedShell />}>
