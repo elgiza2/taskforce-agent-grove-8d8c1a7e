@@ -1,5 +1,11 @@
 # Roadmap
 
+## Full verification and real computer — current request
+- [ ] Sign in to the supplied test account and verify actual chat, groups, memory, files, settings and pricing flows.
+- [ ] Diagnose and repair reproducible defects; run regression tests and repeat affected live checks.
+- [ ] Connect and verify isolated computer execution when a usable provider is available; name any external blocker.
+- [ ] Record tested outcomes and remaining limitations without claiming 100% coverage.
+
 ## Pricing and Vault reference redesign
 - [x] Match pricing layout and selection controls to the supplied screenshots without changing prices or payment behavior.
 - [x] Match Vault categories, list and add-item forms to the supplied screenshots while retaining account-scoped safe storage.
