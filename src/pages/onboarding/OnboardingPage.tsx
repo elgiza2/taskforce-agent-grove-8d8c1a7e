@@ -112,7 +112,7 @@ export default function OnboardingPage() {
   };
 
   if (loading || loadError) return <div className="ob"><main className="ob-main ob-recovery">
-    <h1>Ceyo</h1><p role={loadError ? "alert" : "status"} className="ob-sub">{loadError || "Loading your account…"}</p>
+    <h1>Ceyo</h1>{loadError ? <p role="alert" className="ob-sub">{loadError}</p> : <div role="status" aria-label="Preparing setup" className="my-6 h-8 w-8 animate-pulse rounded-full bg-muted" />}
     {loadError && <Button variant="neutral" className="ob-btn" onClick={() => setRetry((v) => v + 1)}>Retry</Button>}
   </main></div>;
 

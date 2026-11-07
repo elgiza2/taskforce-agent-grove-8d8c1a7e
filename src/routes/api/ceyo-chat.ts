@@ -2,6 +2,7 @@ import { hasCerebrasKey } from "@/lib/keys/cerebrasKey";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { chatFailure } from "@/lib/ceyo/chatFailure";
+import { normalizeChatHistory } from "@/lib/ceyo/chatHistory";
 
 export const Route = createFileRoute("/api/ceyo-chat")({ server: { handlers: {
   POST: async ({ request }) => {
@@ -22,7 +23,7 @@ export const Route = createFileRoute("/api/ceyo-chat")({ server: { handlers: {
     const cursor = rows?.[0]?.created_at || new Date(0).toISOString();
     let lastSeen = cursor;
     let onSteer: ((event: import("@/lib/ceyo/agentLoop.server").LoopEvent) => void) | undefined;
-    const history = [...(rows || [])].reverse().filter((m) => m.content).map((m) => ({ role: m.role === "assistant" ? "assistant" : "user", content: m.content }));
+    const history = normalizeChatHistory(rows || []);
     const poll = async () => {
       const { data, error } = await db.from("messages").select("id,content,created_at,metadata").eq("conversation_id", conv.id).eq("role", "user").gt("created_at", lastSeen).order("created_at");
       if (error) throw new Error(error.message);

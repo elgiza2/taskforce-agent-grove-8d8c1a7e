@@ -29,6 +29,9 @@ export class AgentSkyError extends Error {
  *  first; AGENTSKY_API_KEY stays as a fallback when the pool is empty. */
 type PooledKey = { id: string | null; value: string };
 async function takeKey(): Promise<PooledKey> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: secret } = await supabaseAdmin.rpc("read_agentsky_api_key");
+  if (typeof secret === "string" && secret) return { id: null, value: secret };
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data } = await (supabaseAdmin as any).rpc("take_agentsky_key");
@@ -85,7 +88,6 @@ async function call<T = any>(
     const e = body?.error ?? {};
     if ([401, 402, 403, 429].includes(res.status) && k.id) {
       await reportKey(k, res.status, e.message || "");
-      if (attempt < 2) return call<T>(base, path, init, attempt + 1);
     }
     throw new AgentSkyError(res.status, e.code || "error", e.message || `AgentSky ${res.status}`);
   }

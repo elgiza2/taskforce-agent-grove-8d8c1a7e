@@ -87,3 +87,20 @@
   .ceyo-plans .ceyo-plans-title { font-size:28px!important;margin-bottom:32px; }
   .ceyo-vault .ceyo-top { padding-top:28px;padding-bottom:36px; }
 }
+
+/* One viewport, one selected plan: no nested scrolling. */
+.agent-hub.ceyo-page.ceyo-plans .ceyo-scroll{overflow:hidden!important;height:100dvh;max-height:100dvh;padding:calc(14px + max(env(safe-area-inset-top),var(--safe-top,0px))) 16px calc(12px + max(env(safe-area-inset-bottom),var(--safe-bottom,0px)))}
+.ceyo-plans .ceyo-plans-title{margin:10px 0 16px!important;font-size:22px!important;line-height:1.2}
+.ceyo-plans .ceyo-plans-card{height:auto!important;min-height:0!important;flex:1 1 0;border-radius:8px!important;padding:12px!important;grid-template-rows:auto minmax(0,1fr) auto}
+.ceyo-plans .ceyo-plans-tabs{margin-bottom:10px!important}
+.ceyo-plans .ceyo-plans-benefits{overflow:visible;padding:0}
+.ceyo-plans .ceyo-plans-mult{font-size:28px!important;margin:2px 8px 0}
+.ceyo-plans .ceyo-plans-sub{margin:4px 8px 8px}
+.ceyo-plans .ceyo-plans-gt{margin:8px 8px 0;padding-bottom:6px}
+.ceyo-plans .ceyo-plans-card ul{padding:8px 8px 0;gap:8px}
+.ceyo-plans .ceyo-plans-card li{font-size:13px;line-height:1.35}
+.ceyo-plans .ceyo-plans-foot{margin:0!important;padding:12px 0 0!important}
+.ceyo-plans .ceyo-plans-prices button{min-height:60px;border-radius:8px;padding:8px}
+.ceyo-plans .ceyo-plans-cta{margin-top:10px}
+.ceyo-plans .ceyo-plans-legal{margin-top:8px;font-size:10px}
+@media(max-height:680px){.ceyo-plans .ceyo-plans-brand{min-height:32px}.ceyo-plans .ceyo-plans-title{margin:6px 0 10px!important}.ceyo-plans .ceyo-plans-card ul{gap:4px}.ceyo-plans .ceyo-plans-tabs button{height:34px}.ceyo-plans .ceyo-plans-sub{margin-bottom:4px}.ceyo-plans .ceyo-plans-cta{height:40px}.ceyo-plans .ceyo-plans-prices button{min-height:52px}}

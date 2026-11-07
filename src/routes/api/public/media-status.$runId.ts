@@ -13,7 +13,7 @@ export const Route = createFileRoute("/api/public/media-status/$runId")({
           const s = await runState(params.runId, publicOrigin(request));
           return Response.json(s, { headers: { "Cache-Control": "no-store" } });
         } catch (e: any) {
-          return Response.json({ runId: params.runId, status: "RUNNING", urls: [], error: e?.message }, { status: 200 });
+          return Response.json({ runId: params.runId, status: "FAILED", urls: [], error: e?.message || "Media status unavailable" }, { status: 200 });
         }
       },
     },

@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 import { buildTranscript } from "./transcript";
 
 describe("single active agent turn", () => {
+  it("retains an owner document reference from the save_file result", () => {
+    const turns = buildTranscript([{ id: "result", type: "agent.tool_result", part: { type: "tool_result", call_id: "save1", tool_name: "save_file", status: "ok", result: JSON.stringify({ type: "ceyo.file", id: "doc1", name: "report.txt" }) } }], "en", false);
+    expect(turns.flatMap((turn) => turn.type === "agent" ? turn.cards : [])).toContainEqual({ kind: "file", id: "doc1", name: "report.txt" });
+  });
   it("closes the earlier thinking segment when a user steers the same run", () => {
     const turns = buildTranscript([
       { id: "user1", type: "user.message", content: [{ type: "text", text: "Research" }] },

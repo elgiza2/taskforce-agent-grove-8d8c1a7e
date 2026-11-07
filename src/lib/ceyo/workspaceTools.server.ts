@@ -30,7 +30,10 @@ export function workspaceTools(ctx: Context): AgentTool[] {
     const { id } = z.object({ id: z.string().uuid() }).parse(args);
     return JSON.stringify(checked(await db.from("agent_memories").delete().eq("id", id).eq("user_id", userId).select("id")));
   });
-  add("save_file", "Save a real text, code, CSV or JSON deliverable in the user's library.", { name: str, mime: str, content: str }, ["name", "mime", "content"], async (args) => JSON.stringify(checked(await db.from("agent_documents").insert({ ...documentInput.parse(args), user_id: userId }).select("id,name").single())));
+  add("save_file", "Save a real text, code, CSV or JSON deliverable in the user's library.", { name: str, mime: str, content: str }, ["name", "mime", "content"], async (args) => {
+    const file = checked(await db.from("agent_documents").insert({ ...documentInput.parse(args), user_id: userId }).select("id,name").single());
+    return JSON.stringify({ type: "ceyo.file", ...file });
+  });
   add("read_file", "Read actual contents of a user-owned document reference supplied in chat.", { id: str }, ["id"], async (args) => {
     const { id } = z.object({ id: z.string().uuid() }).parse(args);
     return JSON.stringify(checked(await db.from("agent_documents").select("name,mime,content").eq("id", id).eq("user_id", userId).single()));

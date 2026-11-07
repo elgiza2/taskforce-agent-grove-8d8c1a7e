@@ -24,7 +24,7 @@ export async function getSpeech(text: string, voiceId: string, language: string,
 
 export async function transcribeRecording(file: Blob, language: string, signal?: AbortSignal) {
   const form = new FormData();
-  form.append("file", file, "recording.webm"); form.append("language", language);
+  form.append("file", file, file.type.includes("mp4") ? "recording.mp4" : file.type.includes("wav") ? "recording.wav" : "recording.webm"); form.append("language", language);
   const body = await (await voiceFetch("/api/voice-transcribe", { method: "POST", body: form, signal })).json();
   if (!body.text?.trim()) throw new Error("No speech detected. Try recording again.");
   return String(body.text);

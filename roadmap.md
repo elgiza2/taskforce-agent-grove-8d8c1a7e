@@ -1,10 +1,12 @@
 # Roadmap
 
 ## Pricing, navigation, calls and chat media — 2026-11-07
-- [ ] Fit pricing without scrolling; retain existing prices and improve page transitions without account-loading text.
-- [ ] Diagnose call/reply failures; add draggable/minimizable call UI that stays active when minimized.
-- [ ] Add useful file/media previews and wire Agent Sky generation only against its verified protocol; keep credentials server-side in Supabase.
-- [ ] Verify central flows using the supplied test account and update README with results and limitations.
+- [x] Pricing fits 434×764 for all three plans; preserve prices, cache completed setup in-session and add restrained navigation animation without account-loading text.
+- [x] Correct recording MIME and use direct Cartesia transcription; ID-based reply playback, draggable/minimized robot call works through an actual recorded-sample → chat → speech UI test. Latest user goal returned 15; normalize historical speaker/incomplete content.
+- [x] Persisted agent-file preview/download, sandboxed drawing preview and local attachment previews added. Agent Sky key saved to service-only Vault; existing media client connected instead of stub.
+- [ ] Complete image/video generation verification: Agent Sky returned 402 insufficient_credits; requires provider top-up. Existing paid-plan/credit contracts and missing signing configuration must be integrated without bypassing enforcement before production flow verification.
+- [ ] Persist call lifecycle across leaving the chat/app: minimized calls currently persist only while that chat remains mounted, not across page departure or app closure.
+- [x] Test account login, no-scroll plans, current-goal answer, real file read-back and full sample-audio call checked; 33 targeted tests passed, screenshots reviewed and README updated with exact limits. Real device microphone, media generation and cross-page calls are not claimed verified.
 
 ## Company and legal pages — 2026-11-07
 - [x] Complete About, Contact, Privacy, Terms, Subscription Terms, Cookies and Security under Megsy LLC; remove unsupported deadlines/caps and disclose analytics/voice/encryption boundaries.

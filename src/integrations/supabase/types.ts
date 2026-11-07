@@ -673,6 +673,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      read_agentsky_api_key: { Args: never; Returns: string }
       read_telegram_bot_token: { Args: never; Returns: string }
       save_bot_group: {
         Args: {
@@ -700,6 +701,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      store_agentsky_api_key: { Args: { p_key: string }; Returns: undefined }
       store_telegram_bot_token: {
         Args: { p_token: string }
         Returns: undefined
