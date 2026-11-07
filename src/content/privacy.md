@@ -9,7 +9,7 @@ This policy explains what **Megsy LLC** ("Megsy", "we") collects when you use Ce
 - **Your content:** bots you create and their instructions, groups, chats, files you upload, memories you ask bots to keep, routines and voice messages.
 - **Settings:** language, theme and notification preferences.
 - **Connected apps:** connection references and authorization data are processed by the integration service so bots can use the apps you authorize. Do not send passwords or unrelated credentials in chats.
-- **Technical data:** basic information needed to run and secure the Service, such as device type and error logs.
+- **Technical and usage data:** device information, error logs, page visits and interactions may be processed by operational, analytics and advertising tools described below.
 
 Original voice recordings are cached on the sending device. When you request transcription, audio is sent to the voice provider; the resulting text and recording-origin metadata may be saved with your messages. Generated speech processes reply text. Device-local recordings are not automatically synchronized to other devices.
 
@@ -21,7 +21,7 @@ The Vault screen in settings stores account-scoped labels on the current device.
 - to provide support and communicate with you about your account;
 - to meet legal obligations.
 
-The current service processes chats to provide requested functionality; it does not include a private-chat advertising sale feature. Providers' own processing terms also apply. Do not assume provider training or retention is disabled unless it has been confirmed for the specific service and account.
+Chats are processed to provide requested functionality. The site also contains analytics and advertising measurement tools; their handling must not be confused with AI processing. Providers' own processing terms apply. Do not assume provider training or retention is disabled unless it has been confirmed for the specific service and account.
 
 ## 3. Who processes it
 Depending on the feature you use, data is processed by:
@@ -32,6 +32,8 @@ Depending on the feature you use, data is processed by:
 - **Browserbase** for requested web-page reading;
 - **Composio** and the connected app for authorized integration operations;
 - the configured email delivery service for account messages.
+
+The site currently includes **Google Tag Manager**, **Microsoft Clarity** and **TikTok Pixel** for analytics, interaction measurement or advertising/conversion measurement. TikTok purchase-event code can send transaction/event information, page URL, referrer, browser details, tracking-cookie identifiers and available account identifiers/contact information to the configured event service. **AdRoll/NextRoll** retargeting code is conditional on the site's stored acceptance flag. The actual tags inside a third-party tag-manager account and hosted event-service configuration are not fully verified by this notice. A stored flag or publication of this policy is not proof that every optional tracking path meets applicable consent requirements.
 
 Provider availability and configuration can change. A connected app's own privacy policy governs data received by that app. Telegram processes interactions when you use Telegram features; administrator credential entry is separate from ordinary user chats.
 
