@@ -1,5 +1,10 @@
 # Roadmap
 
+## Agent voice messages and avatar changes
+- [ ] Remove speech buttons below text replies and move real voice/language preferences into agent settings.
+- [ ] Use automatic user language, distinct stable bot voices, and voice-message replies to recordings.
+- [ ] Remove star avatars, vary bot shapes, and verify settings, recordings and playback.
+
 ## Cartesia voice connection
 - [x] Connect authenticated Cartesia voice catalogue and speech generation, keeping credentials private.
 - [x] Add voice/language choice, playable downloadable replies, and microphone recording support in current chat/calls.
