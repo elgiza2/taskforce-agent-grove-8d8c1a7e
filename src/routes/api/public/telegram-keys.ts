@@ -155,19 +155,15 @@ export const Route = createFileRoute("/api/public/telegram-keys")({
             parse_mode: "HTML",
             ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
           });
-        void ({
-              chat_id: chatId,
-              text,
-              parse_mode: "HTML",
-              ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
-            }),
-          });
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const db = supabaseAdmin as any;
 
         const { data: admins } = await db.from("telegram_key_admins").select("telegram_user_id");
+        // Owner IDs from configuration always count, so the bot works before the admin table exists.
+        const owners = (process.env.TELEGRAM_ADMIN_IDS || "6657246146").split(",").map((v) => Number(v.trim())).filter(Boolean);
         const isAdminUser = (id: number) =>
+          owners.includes(Number(id)) ||
           (admins ?? []).some((a: any) => Number(a.telegram_user_id) === Number(id));
 
         // ---- Inline button taps (callback_query) ----
@@ -176,11 +172,7 @@ export const Route = createFileRoute("/api/public/telegram-keys")({
           const fromId = Number(callback?.from?.id);
           const chatId = Number(callback?.message?.chat?.id);
           const data = String(callback?.data ?? "");
-          await fetch(`https://api.telegram.org/bot${token}/answerCallbackQuery`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ callback_query_id: callback.id }),
-          }).catch(() => undefined);
+          await tg("answerCallbackQuery", { callback_query_id: callback.id }).catch(() => undefined);
           if (!chatId || !fromId || !isAdminUser(fromId)) return Response.json({ ok: true });
 
           if (data === "keys:stats") {
