@@ -60,6 +60,10 @@ export const AppRoutes = (_props: { currentUserId: string | null }) => (
     <Route path="/terms" element={<LegalDocPage slug="terms" />} />
     <Route path="/privacy" element={<LegalDocPage slug="privacy" />} />
     <Route path="/subscription-terms" element={<LegalDocPage slug="subscription-terms" />} />
+    <Route path="/about" element={<LegalDocPage slug="about" />} />
+    <Route path="/contact" element={<LegalDocPage slug="contact" />} />
+    <Route path="/cookies" element={<LegalDocPage slug="cookies" />} />
+    <Route path="/security" element={<LegalDocPage slug="security" />} />
     <Route path="/docs" element={<DocsPage />} />
     <Route path="/docs/:slug" element={<DocsPage />} />
 

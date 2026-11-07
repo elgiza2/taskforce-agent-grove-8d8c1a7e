@@ -184,11 +184,15 @@ function Main({ nav }: { nav: Nav }) {
       </Group>
       <Group>
         <Row label="Help Center" sub="Guides for bots, groups and routines" onClick={() => nav("/docs")} right={<Ext />} />
+        <Row label="About Ceyo" onClick={() => nav("/about")} right={<Ext />} />
+        <Row label="Contact" onClick={() => nav("/contact")} right={<Ext />} />
         <Row label="Privacy Policy" onClick={() => nav("/privacy")} right={<Ext />} />
         <Row label="Terms of Service" onClick={() => nav("/terms")} right={<Ext />} />
         <Row label="Subscription Terms" onClick={() => nav("/subscription-terms")} right={<Ext />} />
+        <Row label="Cookies & Local Storage" onClick={() => nav("/cookies")} right={<Ext />} />
+        <Row label="Security" onClick={() => nav("/security")} right={<Ext />} />
       </Group>
-      <p className="ceyo-legal-note">If you subscribe through a Teams, Enterprise or other plan, the agreement for that plan applies.</p>
+      <p className="ceyo-legal-note">Ceyo is owned and operated by Megsy LLC.</p>
       <Group><Row label="Send Feedback" onClick={() => nav("/settings/feedback")} /></Group>
       <Group><Row label="Sign Out" danger onClick={() => void signOut(nav)} /></Group>
       <div className="ceyo-brand-foot"><span className="ceyo-brand-orb"><i /><i /></span><strong>Ceyo</strong><small>1.0.0</small></div>

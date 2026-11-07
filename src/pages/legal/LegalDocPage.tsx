@@ -4,30 +4,12 @@ import { Link, useNavigate } from "react-router-dom";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ChevronLeft } from "lucide-react";
-import botTermsMd from "@/content/bot-terms.md?raw";
-import privacyMd from "@/content/privacy.md?raw";
-import subscriptionTermsMd from "@/content/subscription-terms.md?raw";
+import { Button } from "@/components/ui/button";
+import { LEGAL_DOCS, type LegalSlug } from "./documents";
 import "@/styles/ceyo.css";
-
-export type LegalSlug = "terms" | "privacy" | "subscription-terms";
-
-export const LEGAL_DOCS: Record<LegalSlug, { title: string; description: string; source: string }> = {
-  terms: {
-    title: "Terms of Service",
-    description: "The terms that apply when you use Ceyo and its Bots, including agentic actions, connected services and account rules.",
-    source: botTermsMd,
-  },
-  privacy: {
-    title: "Privacy Policy",
-    description: "How Ceyo collects, uses, shares and protects your personal information across the app and the Bots you run.",
-    source: privacyMd,
-  },
-  "subscription-terms": {
-    title: "Subscription Terms of Service",
-    description: "The agreement that covers your Ceyo subscription: plans, billing, renewals, cancellation, refunds and usage rules.",
-    source: subscriptionTermsMd,
-  },
-};
+import "@/styles/company-pages.css";
+export { LEGAL_DOCS } from "./documents";
+export type { LegalSlug } from "./documents";
 
 /** Markdown body with internal links kept inside the app router. */
 export function DocMarkdown({ source }: { source: string }) {
@@ -40,7 +22,7 @@ export function DocMarkdown({ source }: { source: string }) {
             href && href.startsWith("/") ? (
               <Link to={href}>{children}</Link>
             ) : (
-              <a href={href} target="_blank" rel="noreferrer">
+              <a href={href} target={href?.startsWith("mailto:") ? undefined : "_blank"} rel="noreferrer">
                 {children}
               </a>
             ),
@@ -57,20 +39,30 @@ export default function LegalDocPage({ slug }: { slug: LegalSlug }) {
   const nav = useNavigate();
 
   useEffect(() => {
-    document.title = `${doc.title} | Ceyo`;
+    document.title = `${doc.title} — Ceyo · Megsy LLC`;
   }, [doc.title]);
 
   return (
-    <div className="agent-hub ceyo-page" data-no-translate>
+    <div className="agent-hub ceyo-page ceyo-company" data-no-translate>
       <header className="ceyo-top">
-        <button type="button" className="gx-round" aria-label="Back" onClick={() => nav("/")}>
+        <Button variant="ghost" size="icon" type="button" className="gx-round" aria-label="Back" onClick={() => nav("/")}>
           <ChevronLeft size={20} />
-        </button>
-        <h1>{doc.title}</h1>
+        </Button>
+        <h1>Ceyo · Megsy LLC</h1>
         <span className="ceyo-top-action" />
       </header>
-      <div className="ceyo-scroll">
-        <DocMarkdown source={doc.source} />
+      <div className="ceyo-scroll company-scroll">
+        <div className="company-layout">
+          <nav className="company-nav" aria-label="Company & legal">
+            <p className="company-label">COMPANY & LEGAL</p>
+            {(Object.keys(LEGAL_DOCS) as LegalSlug[]).map((key) => <Button key={key} variant="ghost" className="company-link" asChild>
+              <Link to={`/${key}`} aria-current={key === slug ? "page" : undefined}>{LEGAL_DOCS[key].title}</Link>
+            </Button>)}
+          </nav>
+          <main><DocMarkdown source={doc.source} />
+            <footer className="company-footer"><span>© 2026 Megsy LLC</span><a href="mailto:CEO@megsyai.com">CEO@megsyai.com</a></footer>
+          </main>
+        </div>
       </div>
     </div>
   );
