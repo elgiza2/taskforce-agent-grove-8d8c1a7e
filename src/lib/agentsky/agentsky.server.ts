@@ -88,7 +88,6 @@ async function call<T = any>(
     const e = body?.error ?? {};
     if ([401, 402, 403, 429].includes(res.status) && k.id) {
       await reportKey(k, res.status, e.message || "");
-      if (attempt < 2) return call<T>(base, path, init, attempt + 1);
     }
     throw new AgentSkyError(res.status, e.code || "error", e.message || `AgentSky ${res.status}`);
   }
