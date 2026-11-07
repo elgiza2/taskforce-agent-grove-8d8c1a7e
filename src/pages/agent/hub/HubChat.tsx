@@ -34,6 +34,8 @@ import { refreshSessions, workspace } from "@/lib/agentsky/store";
 import { useAgentSession } from "@/hooks/useAgentSession";
 import { MediaCard, PlanCard, TaskCard, VideoProposalCard } from "@/components/agent/Cards";
 import { VoiceCallBar } from "./VoiceCall";
+import { ReplyAudio } from "./VoiceControls";
+import { microphoneRecording, transcribeRecording } from "@/lib/audio/voiceClient";
 import { ChoiceCard, ConnectAppsCard, SecretCard, readConnectApps } from "./HubCards";
 import { AgentProposalCard } from "@/components/agent/AgentProposalCard";
 import { orbStateFor, type AgentTurn } from "@/lib/agentsky/transcript";
@@ -111,6 +113,8 @@ function Composer({
   const addFiles = (list: FileList | null) => { if (list?.length) setFiles((c) => [...c, ...Array.from(list)].slice(0, 6)); };
   const [listening, setListening] = useState(false);
   const recognition = useRef<{ stop: () => void } | null>(null);
+  const recordingAlive = useRef(true);
+  const recordingStarting = useRef(false);
   const textarea = useRef<HTMLTextAreaElement>(null);
   const ar = lang === "ar";
 
@@ -121,7 +125,7 @@ function Composer({
     el.style.height = `${Math.min(el.scrollHeight, 140)}px`;
   }, [text]);
   useEffect(() => { if (replyTo) textarea.current?.focus(); }, [replyTo]);
-  useEffect(() => () => recognition.current?.stop(), []);
+  useEffect(() => { recordingAlive.current = true; return () => { recordingAlive.current = false; recognition.current?.stop(); }; }, []);
 
   const submit = async () => {
     const typed = text.trim();
@@ -141,19 +145,21 @@ function Composer({
     finally { setUploading(false); }
   };
 
-  const listen = () => {
-    if (listening) { recognition.current?.stop(); setListening(false); return; }
-    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SR) { textarea.current?.focus(); return; }
-    const r = new SR();
-    r.lang = ar ? "ar-EG" : "en-US";
-    r.interimResults = true;
-    r.onresult = (e: any) => setText(Array.from(e.results as any[]).map((x: any) => x[0].transcript).join(" "));
-    r.onend = () => setListening(false);
-    r.onerror = () => setListening(false);
-    recognition.current = r;
-    r.start();
-    setListening(true);
+  const listen = async () => {
+    if (listening) { recognition.current?.stop(); return; }
+    if (recordingStarting.current) return;
+    recordingStarting.current = true;
+    try {
+      const recording = await microphoneRecording();
+      if (!recordingAlive.current) { recording.stop(); return; }
+      recognition.current = recording; setListening(true);
+      const blob = await recording.result;
+      if (!recordingAlive.current) return;
+      setListening(false); setUploading(true);
+      const words = await transcribeRecording(blob, ar ? "ar" : "en");
+      if (recordingAlive.current) setText((previous) => [previous, words].filter(Boolean).join(" "));
+    } catch (error) { if (recordingAlive.current) toast.error(error instanceof Error ? error.message : "Recording unavailable"); }
+    finally { recordingStarting.current = false; if (recordingAlive.current) { setListening(false); setUploading(false); } }
   };
 
   const mentionQuery = members.length ? /(?:^|\s)@([^\s@]*)$/.exec(text)?.[1] : undefined;
@@ -503,6 +509,7 @@ export function HubChat({
                             {reaction && <em className="cx-reaction">{reaction}</em>}
                           </div>
                         )}
+                        {b.text && !s.running && <ReplyAudio text={b.text} ar={ar} />}
                         {b.lastPart && b.turn.cards?.map((card: any) => {
                           if (card.kind === "agent-proposal") return <AgentProposalCard key={card.id} proposal={card.proposal} />;
                           if (card.kind === "media") return <MediaCard key={card.id} media={card.media} lang={lang} />;

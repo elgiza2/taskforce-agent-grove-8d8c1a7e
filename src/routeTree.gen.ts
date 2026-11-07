@@ -26,6 +26,8 @@ import { Route as ApiMcpRouteImport } from './routes/api/mcp'
 import { Route as ApiReadUrlRouteImport } from './routes/api/read-url'
 import { Route as ApiRenderPdfRouteImport } from './routes/api/render-pdf'
 import { Route as ApiTranscribeRouteImport } from './routes/api/transcribe'
+import { Route as ApiVoiceRouteImport } from './routes/api/voice'
+import { Route as ApiVoiceTranscribeRouteImport } from './routes/api/voice-transcribe'
 import { Route as ApiWebSearchRouteImport } from './routes/api/web-search'
 import { Route as ApiAgentSplatRouteImport } from './routes/api/agent.$'
 import { Route as ApiPublicCeyoRoutinesRouteImport } from './routes/api/public/ceyo-routines'
@@ -123,6 +125,16 @@ const ApiTranscribeRoute = ApiTranscribeRouteImport.update({
   path: '/api/transcribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiVoiceRoute = ApiVoiceRouteImport.update({
+  id: '/api/voice',
+  path: '/api/voice',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiVoiceTranscribeRoute = ApiVoiceTranscribeRouteImport.update({
+  id: '/api/voice-transcribe',
+  path: '/api/voice-transcribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiWebSearchRoute = ApiWebSearchRouteImport.update({
   id: '/api/web-search',
   path: '/api/web-search',
@@ -200,6 +212,8 @@ export interface FileRoutesByFullPath {
   '/api/read-url': typeof ApiReadUrlRoute
   '/api/render-pdf': typeof ApiRenderPdfRoute
   '/api/transcribe': typeof ApiTranscribeRoute
+  '/api/voice': typeof ApiVoiceRoute
+  '/api/voice-transcribe': typeof ApiVoiceTranscribeRoute
   '/api/web-search': typeof ApiWebSearchRoute
   '/api/agent/$': typeof ApiAgentSplatRoute
   '/api/public/ceyo-routines': typeof ApiPublicCeyoRoutinesRoute
@@ -230,6 +244,8 @@ export interface FileRoutesByTo {
   '/api/read-url': typeof ApiReadUrlRoute
   '/api/render-pdf': typeof ApiRenderPdfRoute
   '/api/transcribe': typeof ApiTranscribeRoute
+  '/api/voice': typeof ApiVoiceRoute
+  '/api/voice-transcribe': typeof ApiVoiceTranscribeRoute
   '/api/web-search': typeof ApiWebSearchRoute
   '/api/agent/$': typeof ApiAgentSplatRoute
   '/api/public/ceyo-routines': typeof ApiPublicCeyoRoutinesRoute
@@ -261,6 +277,8 @@ export interface FileRoutesById {
   '/api/read-url': typeof ApiReadUrlRoute
   '/api/render-pdf': typeof ApiRenderPdfRoute
   '/api/transcribe': typeof ApiTranscribeRoute
+  '/api/voice': typeof ApiVoiceRoute
+  '/api/voice-transcribe': typeof ApiVoiceTranscribeRoute
   '/api/web-search': typeof ApiWebSearchRoute
   '/api/agent/$': typeof ApiAgentSplatRoute
   '/api/public/ceyo-routines': typeof ApiPublicCeyoRoutinesRoute
@@ -293,6 +311,8 @@ export interface FileRouteTypes {
     | '/api/read-url'
     | '/api/render-pdf'
     | '/api/transcribe'
+    | '/api/voice'
+    | '/api/voice-transcribe'
     | '/api/web-search'
     | '/api/agent/$'
     | '/api/public/ceyo-routines'
@@ -323,6 +343,8 @@ export interface FileRouteTypes {
     | '/api/read-url'
     | '/api/render-pdf'
     | '/api/transcribe'
+    | '/api/voice'
+    | '/api/voice-transcribe'
     | '/api/web-search'
     | '/api/agent/$'
     | '/api/public/ceyo-routines'
@@ -353,6 +375,8 @@ export interface FileRouteTypes {
     | '/api/read-url'
     | '/api/render-pdf'
     | '/api/transcribe'
+    | '/api/voice'
+    | '/api/voice-transcribe'
     | '/api/web-search'
     | '/api/agent/$'
     | '/api/public/ceyo-routines'
@@ -384,6 +408,8 @@ export interface RootRouteChildren {
   ApiReadUrlRoute: typeof ApiReadUrlRoute
   ApiRenderPdfRoute: typeof ApiRenderPdfRoute
   ApiTranscribeRoute: typeof ApiTranscribeRoute
+  ApiVoiceRoute: typeof ApiVoiceRoute
+  ApiVoiceTranscribeRoute: typeof ApiVoiceTranscribeRoute
   ApiWebSearchRoute: typeof ApiWebSearchRoute
   ApiAgentSplatRoute: typeof ApiAgentSplatRoute
   ApiPublicCeyoRoutinesRoute: typeof ApiPublicCeyoRoutinesRoute
@@ -518,6 +544,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTranscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/voice': {
+      id: '/api/voice'
+      path: '/api/voice'
+      fullPath: '/api/voice'
+      preLoaderRoute: typeof ApiVoiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/voice-transcribe': {
+      id: '/api/voice-transcribe'
+      path: '/api/voice-transcribe'
+      fullPath: '/api/voice-transcribe'
+      preLoaderRoute: typeof ApiVoiceTranscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/web-search': {
       id: '/api/web-search'
       path: '/api/web-search'
@@ -616,6 +656,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiReadUrlRoute: ApiReadUrlRoute,
   ApiRenderPdfRoute: ApiRenderPdfRoute,
   ApiTranscribeRoute: ApiTranscribeRoute,
+  ApiVoiceRoute: ApiVoiceRoute,
+  ApiVoiceTranscribeRoute: ApiVoiceTranscribeRoute,
   ApiWebSearchRoute: ApiWebSearchRoute,
   ApiAgentSplatRoute: ApiAgentSplatRoute,
   ApiPublicCeyoRoutinesRoute: ApiPublicCeyoRoutinesRoute,
