@@ -91,7 +91,11 @@ async function startReply(sessionId: string) {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ conversationId: sessionId }),
       });
-      if (!res.ok || !res.body) throw new Error(`Reply failed (${res.status})`);
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(typeof body?.error === "string" ? body.error : `Reply failed (${res.status})`);
+      }
+      if (!res.body) throw new Error("The agent returned no response stream.");
       await readEventStream(res.body, (e) => { push(e); });
     } catch (e: any) {
       if (live.ctl.signal.aborted) push({ id: crypto.randomUUID(), type: "session.status_idle", stop_reason: { type: "interrupted" } });
