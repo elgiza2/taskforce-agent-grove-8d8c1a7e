@@ -9,8 +9,8 @@ import type { AgentVoiceSettings } from "@/lib/audio/agentVoice";
 import { useVoiceChoice } from "./VoiceControls";
 
 /** Turn-based calls: explicit recording, authenticated transcription and Cartesia reply. */
-export function VoiceCallBar({ agent, lang, busy, lastReply, onSay, onEnd, settings, agentIds }: {
-  settings: AgentVoiceSettings; agentIds: string[]; agent: AgentInfo; lang: HubLang; busy: boolean; lastReply: string; onSay: (text: string) => void; onEnd: () => void;
+export function VoiceCallBar({ agent, lang, busy, lastReply, onSay, onEnd, settings, agentIds, replyError }: {
+  replyError?: string | null; settings: AgentVoiceSettings; agentIds: string[]; agent: AgentInfo; lang: HubLang; busy: boolean; lastReply: string; onSay: (text: string) => void; onEnd: () => void;
 }) {
   const ar = lang === "ar";
   const choice = useVoiceChoice(ar ? "ar" : "en", agent.id, agentIds, settings);
@@ -20,6 +20,7 @@ export function VoiceCallBar({ agent, lang, busy, lastReply, onSay, onEnd, setti
   const alive = useRef(true);
   const recording = useRef<{ stop: () => void } | null>(null);
   const starting = useRef(false);
+  const discarded = useRef(false);
   const abort = useRef<AbortController | null>(null);
   const player = useRef<HTMLAudioElement | null>(null);
   const audioUrl = useRef("");
@@ -36,25 +37,28 @@ export function VoiceCallBar({ agent, lang, busy, lastReply, onSay, onEnd, setti
   const record = async () => {
     if (phase === "listening") { recording.current?.stop(); return; }
     if (starting.current || muted || busy) return;
-    starting.current = true; stopAudio(); setError("");
+    starting.current = true; discarded.current = false; stopAudio(); setError("");
     try {
       const take = await microphoneRecording();
       if (!alive.current) { take.stop(); return; }
       recording.current = take; setPhase("listening");
       const blob = await take.result;
       if (!alive.current) return;
+      if (discarded.current) { recording.current = null; setPhase("ready"); return; }
       recording.current = null; setPhase("thinking");
       const controller = new AbortController(); abort.current = controller;
       const text = await transcribeRecording(blob, choice.language, controller.signal);
-      if (alive.current) { awaited.current = true; onSay(text); }
+      if (alive.current && !discarded.current) { spoken.current = lastReply; awaited.current = true; onSay(text); }
     } catch (e) { if (alive.current) { setError(e instanceof Error ? e.message : "Recording unavailable"); setPhase("ready"); } }
     finally { starting.current = false; }
   };
 
   useEffect(() => {
+    if (replyError) { awaited.current = false; stopAudio(); setError(replyError); setPhase("ready"); return; }
     if (busy) { awaited.current = true; setPhase("thinking"); return; }
     if (!awaited.current) return;
     if (!lastReply || lastReply === spoken.current) { setPhase("ready"); return; }
+    if (!choice.voiceId) return;
     awaited.current = false; spoken.current = lastReply;
     stopAudio(); const controller = new AbortController(); abort.current = controller;
     setPhase("thinking"); setError("");
@@ -70,7 +74,7 @@ export function VoiceCallBar({ agent, lang, busy, lastReply, onSay, onEnd, setti
         await audio.play(); if (alive.current) setPhase("speaking");
       } catch (e) { if (alive.current && !controller.signal.aborted) { setError(e instanceof Error ? e.message : "Audio unavailable"); setPhase("ready"); } }
     })();
-  }, [busy, lastReply]); // voice choices apply to the next reply
+  }, [busy, lastReply, replyError, choice.voiceId]); // voice choices apply to the next reply
 
   return <div className="cx-call cx-call-cartesia" role="dialog" aria-label={ar ? "مكالمة صوتية" : "Voice call"}>
     <BotAvatar agent={agent} size={44} state={phase === "speaking" ? "talking" : phase === "thinking" ? "thinking" : "idle"} />
@@ -79,7 +83,7 @@ export function VoiceCallBar({ agent, lang, busy, lastReply, onSay, onEnd, setti
       {(error || choice.error) && <span role="alert">{error || choice.error}</span>}
     </div>
     <Button variant="ghost" size="icon" className="cx-call-btn" disabled={muted || busy || phase === "thinking"} aria-label={phase === "listening" ? "Stop recording" : "Record voice message"} title={phase === "listening" ? "Stop recording" : "Record voice message"} onClick={() => void record()}>{phase === "listening" ? <Square size={18} /> : <Mic size={19} />}</Button>
-    <Button variant="ghost" size="icon" className="cx-call-btn" data-off={muted} aria-label={muted ? "Unmute" : "Mute"} onClick={() => { if (!muted) recording.current?.stop(); setMuted((m) => !m); }}>{muted ? <MicOff size={19} /> : <Mic size={19} />}</Button>
+    <Button variant="ghost" size="icon" className="cx-call-btn" data-off={muted} aria-label={muted ? "Unmute" : "Mute"} onClick={() => { if (!muted) { discarded.current = true; recording.current?.stop(); abort.current?.abort(); awaited.current = false; setPhase("ready"); } setMuted((m) => !m); }}>{muted ? <MicOff size={19} /> : <Mic size={19} />}</Button>
     <Button variant="ghost" size="icon" className="cx-call-btn cx-call-end" aria-label={ar ? "إنهاء المكالمة" : "End call"} onClick={onEnd}><X size={20} /></Button>
   </div>;
 }
