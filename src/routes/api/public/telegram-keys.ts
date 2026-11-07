@@ -28,7 +28,7 @@ const IDS = Object.keys(PROVIDERS) as ProviderId[];
 
 function normalizeProvider(raw: string): ProviderId | null {
   const v = raw.trim().toLowerCase();
-  if (v.startsWith("c") && v !== "composio") return v === "cerebras" || v === "c" ? "cerebras" : null;
+  if (v === "cerebras" || v === "c") return "cerebras";
   if (v === "browserbase" || v === "browser" || v === "b") return "browserbase";
   if (v === "composio" || v === "x") return "composio";
   return null;
