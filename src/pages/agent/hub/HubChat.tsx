@@ -34,7 +34,9 @@ import { refreshSessions, workspace } from "@/lib/agentsky/store";
 import { useAgentSession } from "@/hooks/useAgentSession";
 import { MediaCard, PlanCard, TaskCard, VideoProposalCard } from "@/components/agent/Cards";
 import { VoiceCallBar } from "./VoiceCall";
-import { ReplyAudio } from "./VoiceControls";
+import { VoiceMessage } from "./VoiceControls";
+import { prefersVoiceReply, type AgentVoiceSettings, type RecordingOrigin } from "@/lib/audio/agentVoice";
+import { cacheRecording } from "@/lib/audio/recordingCache";
 import { microphoneRecording, transcribeRecording } from "@/lib/audio/voiceClient";
 import { ChoiceCard, ConnectAppsCard, SecretCard, readConnectApps } from "./HubCards";
 import { AgentProposalCard } from "@/components/agent/AgentProposalCard";
@@ -95,7 +97,7 @@ function Composer({
   queue: { id: string; text: string }[];
   replyTo: string | null;
   onCancelReply: () => void;
-  onSend: (text: string) => void;
+  onSend: (text: string, origin?: RecordingOrigin) => void;
   onStop: () => void;
   onUnqueue: (id: string) => void;
   onNew: () => void;
@@ -157,7 +159,11 @@ function Composer({
       if (!recordingAlive.current) return;
       setListening(false); setUploading(true);
       const words = await transcribeRecording(blob, ar ? "ar" : "en");
-      if (recordingAlive.current) setText((previous) => [previous, words].filter(Boolean).join(" "));
+      if (recordingAlive.current) {
+        const recordingId = crypto.randomUUID();
+        await cacheRecording(recordingId, blob).catch(() => {});
+        onSend(words, { voiceOrigin: "recording", recordingId });
+      }
     } catch (error) { if (recordingAlive.current) toast.error(error instanceof Error ? error.message : "Recording unavailable"); }
     finally { recordingStarting.current = false; if (recordingAlive.current) { setListening(false); setUploading(false); } }
   };
@@ -225,6 +231,8 @@ function Composer({
 
 export function HubChat({
   lang,
+  voiceSettings,
+  voicePreferences,
   agent,
   group,
   agents,
@@ -241,6 +249,8 @@ export function HubChat({
   onMarkUnread,
 }: {
   lang: HubLang;
+  voiceSettings: AgentVoiceSettings;
+  voicePreferences: Record<string, AgentVoiceSettings>;
   agent: AgentInfo;
   group?: AgentGroup;
   agents: AgentInfo[];
@@ -259,7 +269,7 @@ export function HubChat({
   void sessions; void onHide;
   const nav = useNavigate();
   const [starting, setStarting] = useState(false);
-  const [firstMessage, setFirstMessage] = useState<{ id: string; text: string; at: string; sessionId: string | null } | null>(null);
+  const [firstMessage, setFirstMessage] = useState<{ id: string; text: string; at: string; sessionId: string | null; voiceOrigin?: "recording"; recordingId?: string } | null>(null);
   const [toast, setToast] = useState<{ title: string; body?: string; tone?: "error" } | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [findOpen, setFindOpen] = useState(false);
@@ -307,13 +317,13 @@ export function HubChat({
     if (err) setToast({ title: ar ? "الوكيل مقدرش يرد" : "No reply received", body: err, tone: "error" });
   }, [lastAgent?.error, s.error, ar]);
 
-  const startConversation = async (text: string) => {
+  const startConversation = async (text: string, origin: RecordingOrigin = {}) => {
     if (demo) return;
     const messageId = crypto.randomUUID();
-    setFirstMessage({ id: messageId, text, at: new Date().toISOString(), sessionId: null });
+    setFirstMessage({ id: messageId, text, at: new Date().toISOString(), sessionId: null, ...origin });
     setStarting(true);
     try {
-      const result = await agentApi.createSession({ agentId: agent.id, text, messageId });
+      const result = await agentApi.createSession({ agentId: agent.id, text, messageId, origin });
       workspace.upsertSession(result.session);
       setFirstMessage((pending) => pending ? { ...pending, sessionId: result.session.id } : null);
       onSession(result.session.id);
@@ -434,6 +444,8 @@ export function HubChat({
       {calling && !group && agent && (
         <VoiceCallBar
           agent={agent}
+          settings={voiceSettings}
+          agentIds={agents.map((a) => a.id)}
           lang={lang}
           busy={s.running || starting}
           lastReply={bubbles.length && bubbles[bubbles.length - 1].role === "agent" ? bubbles[bubbles.length - 1].text : ""}
@@ -478,15 +490,19 @@ export function HubChat({
                 onPointerLeave: cancelPress,
                 onContextMenu: (e: React.MouseEvent) => { e.preventDefault(); cancelPress(); setSheet(b); },
               };
+              const input = bubbles.slice(0, i).reverse().find((item) => item.role === "user");
+              const voiceReply = b.role === "agent" && prefersVoiceReply(input?.turn.voiceOrigin, b.text) && !b.turn.running && !b.turn.error && !b.turn.stopped;
+              const speaker = b.speaker || agent;
+              const settings = speaker.voiceSettings || voicePreferences[speaker.id] || voiceSettings;
               const reaction = reactions[b.key];
               const time = fmtTime(b.at);
               return (
                 <div key={b.key} id={`cx-${b.key}`} className="cx-row-wrap">
-                  {showDay && <p className="cx-day">{new Date(b.at!).toDateString() === new Date().toDateString() ? (ar ? "النهارده " : "Today ") : ""}{time}</p>}
+                  {showDay && <p className="cx-day">{new Date(b.at || "").toDateString() === new Date().toDateString() ? (ar ? "النهارده " : "Today ") : ""}{time}</p>}
                   {b.role === "user" ? (
                     <div className="cx-row cx-row-user">
                       <div className="cx-bubble cx-bubble-user" data-hit={hit} data-select={selectable === b.key} dir="auto" {...handlers}>
-                        {b.text.startsWith("> ") ? (() => { const [quote, ...rest] = b.text.split("\n\n"); return <><span className="cx-quote">{quote.slice(2)}</span><Highlight text={rest.join("\n\n")} q={q} /></>; })() : <Highlight text={b.text} q={q} />}
+                        {b.turn.voiceOrigin === "recording" && b.turn.recordingId ? <VoiceMessage own text={b.text} recordingId={b.turn.recordingId} agentId={agent.id} agentIds={agents.map((a) => a.id)} settings={voiceSettings} ar={ar} /> : b.text.startsWith("> ") ? (() => { const [quote, ...rest] = b.text.split("\n\n"); return <><span className="cx-quote">{quote.slice(2)}</span><Highlight text={rest.join("\n\n")} q={q} /></>; })() : <Highlight text={b.text} q={q} />}
                         {reaction && <em className="cx-reaction">{reaction}</em>}
                       </div>
                       <span className="cx-time">{time}</span>
@@ -497,7 +513,7 @@ export function HubChat({
                       <div className="cx-agent-body">
                         {(group || b.partIndex === 0) && <span className="cx-author" dir="auto">{b.speaker?.name || title}</span>}
                         {b.lastPart && b.turn.cards?.filter((c: any) => c.kind === "plan").map((c: any) => <PlanCard key={c.id} title={c.title} steps={c.steps} lang={lang} />)}
-                        {b.text && (
+                        {voiceReply && input ? <VoiceMessage text={b.text} recordingId={`${input.turn.recordingId || input.turnId}:${b.partIndex}`} agentId={speaker.id} agentIds={agents.map((a) => a.id)} settings={settings} ar={ar} /> : b.text && (
                           <div className="cx-bubble cx-bubble-agent" data-hit={hit} data-select={selectable === b.key} dir="auto" {...handlers}>
                             {q ? <p><Highlight text={b.text} q={q} /></p> : (
                               <ReactMarkdown remarkPlugins={[remarkGfm]} components={{
@@ -509,7 +525,6 @@ export function HubChat({
                             {reaction && <em className="cx-reaction">{reaction}</em>}
                           </div>
                         )}
-                        {b.text && !s.running && <ReplyAudio text={b.text} ar={ar} />}
                         {b.lastPart && b.turn.cards?.map((card: any) => {
                           if (card.kind === "agent-proposal") return <AgentProposalCard key={card.id} proposal={card.proposal} />;
                           if (card.kind === "media") return <MediaCard key={card.id} media={card.media} lang={lang} />;
@@ -581,7 +596,7 @@ export function HubChat({
           queue={s.queue}
           replyTo={replyTo}
           onCancelReply={() => setReplyTo(null)}
-          onSend={(text) => { setPinned(true); setSelectable(null); if (!sessionId && !demo) void startConversation(text); else s.send(text); }}
+          onSend={(text, origin) => { setPinned(true); setSelectable(null); if (!sessionId && !demo) void startConversation(text, origin); else s.send(text, [], origin); }}
           onStop={s.stop}
           onUnqueue={s.unqueue}
           onNew={() => onSession(null)}

@@ -1,4 +1,5 @@
 import "@/styles/ceyo.css";
+import { VoiceSettingsFields } from "./VoiceControls";
 import { ResourceList } from "@/components/agent/ResourceList";
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { fileToAvatar, writeGroupAvatar } from "./chatPrefs";
@@ -43,12 +44,6 @@ import {
   type HubLang,
 } from "./HubParts";
 
-const VOICE_OPTIONS = {
-  voice: ["Not set", "Ara", "Eve", "Leo", "Rex", "Sal"],
-  speed: [0.75, 1, 1.25, 1.5, 2],
-  language: ["Auto", "English", "العربية", "Español", "Français", "Deutsch"],
-} as const;
-
 export type AgentFormValue = {
   name: string;
   description: string;
@@ -87,7 +82,6 @@ export function AgentForm({
   const [shape, setShape] = useState(start.shape);
   const [hex, setHex] = useState(start.hex);
   const [v, setV] = useState<VoiceSettings>(voice);
-  const [pickVoice, setPickVoice] = useState<null | "voice" | "speed" | "language">(null);
   const look = { shape, hex };
   const ok = name.trim().length >= 2 && !busy;
   const submit = () => {
@@ -115,31 +109,8 @@ export function AgentForm({
           </button>
         ))}</div>
         <div className="gx-colors">{BOT_COLORS.map((c) => <button type="button" key={c.hex} aria-label={c.hex} data-active={hex === c.hex} style={{ background: c.hex }} onClick={() => setHex(c.hex)} />)}</div>
-        {initial && (
-          <div className="gx-voice">
-            <p className="cx-field-label">{lang === "ar" ? "الصوت" : "Voice"}</p>
-            <div className="cx-card">
-              {(["voice", "speed", "language"] as const).map((k) => (
-                <button type="button" key={k} onClick={() => setPickVoice(k)}>
-                  <span>{k === "voice" ? "Voice" : k === "speed" ? "Speed" : "Language"}</span>
-                  <small>{k === "speed" ? `${v.speed}x` : v[k]}</small><ChevronRight size={18} />
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        <div className="gx-voice"><p className="cx-field-label">{lang === "ar" ? "الصوت واللغة" : "Voice & language"}</p><VoiceSettingsFields value={v} onChange={setV} /></div>
       </div>
-      {pickVoice && <>
-        <div className="cx-sheet-scrim" onPointerDown={() => setPickVoice(null)} />
-        <div className="cx-sheet" role="listbox">
-          {VOICE_OPTIONS[pickVoice].map((o) => {
-            const on = String(v[pickVoice]) === String(o);
-            return <button type="button" key={String(o)} className="gx-opt" data-active={on} onClick={() => { setV({ ...v, [pickVoice]: o } as VoiceSettings); setPickVoice(null); }}>
-              <span>{pickVoice === "speed" ? `${o}x` : o}</span>{on && <Check size={18} />}
-            </button>;
-          })}
-        </div>
-      </>}
       {error && <p className="gx-error" role="alert">{error}</p>}
       <button type="button" className="gx-create-cta" disabled={!ok} onClick={submit}>{busy ? "…" : cta || (initial ? "Save" : "Create")}</button>
     </section>
