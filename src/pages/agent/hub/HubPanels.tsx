@@ -286,7 +286,7 @@ export function ProfilePanel({
         <button type="button" className="cx-pill-btn" onClick={() => group ? setView("edit") : onEdit()}>{ar ? "تعديل" : "Edit"}</button>
         {copied && <p className="cx-copied">{ar ? "اتنسخ" : "Copied"}</p>}
         <div className="cx-card">
-          <button type="button" onClick={() => setView("routines")}><Clock3 size={20} /><span>{ar ? "الروتينات" : "Routines"}</span><small>0 {ar ? "شغال" : "on"}</small><ChevronRight size={18} /></button>
+          <button type="button" onClick={() => setView("routines")}><Clock3 size={20} /><span>{ar ? "الروتينات" : "Routines"}</span><ChevronRight size={18} /></button>
           <button type="button" onClick={() => setView("library")}><Library size={20} /><span>{ar ? "المكتبة" : "Library"}</span><ChevronRight size={18} /></button>
           {!group && <button type="button" onClick={() => onComputer?.()}><Monitor size={20} /><span>{ar ? "الكمبيوتر" : "Computer"}</span><ChevronRight size={18} /></button>}
           {!group && <button type="button" onClick={() => setNotify((n) => { const next = !n; try { localStorage.setItem(`ceyo_bot_notify:${agent.id}`, next ? "1" : "0"); } catch { /* storage unavailable */ } return next; })}><Bell size={20} /><span>{ar ? "الإشعارات" : "Notifications"}</span><small>{notify ? (ar ? "شغالة" : "On") : (ar ? "مقفولة" : "Off")}</small></button>}

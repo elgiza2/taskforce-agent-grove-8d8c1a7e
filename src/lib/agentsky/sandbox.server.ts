@@ -18,37 +18,12 @@ function isBlockedHost(host: string): boolean {
   );
 }
 
-/** Execute JS in a VM sandbox with timeout. No require/process/env access. */
+/** Fail closed until a real remote execution service is connected. */
 export async function runSandboxCode(
-  code: string,
-  timeoutMs = 15_000,
+  _code: string,
+  _timeoutMs = 15_000,
 ): Promise<{ ok: boolean; output: string }> {
-  // Function constructor sandbox: no require/process/env, hard timeout.
-  // The code runs as an async closure with a fake console; secrets and Node
-  // APIs are not in scope.
-  try {
-    const logs: string[] = [];
-    const fakeConsole = {
-      log: (...a: any[]) => logs.push(a.map(String).join(" ")),
-      info: (...a: any[]) => logs.push(a.map(String).join(" ")),
-      warn: (...a: any[]) => logs.push(a.map(String).join(" ")),
-      error: (...a: any[]) => logs.push(a.map(String).join(" ")),
-    };
-    const fn = new Function("console", `return (async () => { ${code} \n })()`);
-    const value = await Promise.race([
-      fn(fakeConsole),
-      new Promise((_, rej) =>
-        setTimeout(
-          () => rej(new Error(`Timed out after ${Math.round(timeoutMs / 1000)}s`)),
-          timeoutMs,
-        ),
-      ),
-    ]);
-    if (value !== undefined) logs.push(typeof value === "string" ? value : JSON.stringify(value));
-    return { ok: true, output: clip(logs.join("\n") || "(no output)") };
-  } catch (e: any) {
-    return { ok: false, output: clip("Error: " + String(e?.message || e).slice(0, 500)) };
-  }
+  return { ok: false, output: "Code execution is unavailable: an isolated computer service must be connected." };
 }
 
 export async function serverWebFetch(rawUrl: string): Promise<{ ok: boolean; output: string }> {
