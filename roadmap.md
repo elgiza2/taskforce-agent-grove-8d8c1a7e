@@ -4,7 +4,8 @@
 - [x] Remove speech buttons below text replies and move real voice/language preferences into agent settings; saved Arabic preference read back from the real account.
 - [x] Implement automatic user language, distinct bot voices, recording-aware replies and private cached audio. Real Arabic voice-message playback verified; 18 targeted tests passed.
 - [x] Remove star avatars and vary bot shapes; mobile/desktop screenshots and recording playback verified without page errors.
-- [ ] Verify an actual new agent reply delivered as a voice message; blocked by missing Cerebras configuration (chat endpoint returned 503). User recordings are stored on the sending device, not synchronized as audio files.
+- [ ] Verify an actual new agent reply delivered as a voice message; blocked by missing Cerebras configuration. User recordings are stored on the sending device, not synchronized as audio files.
+- [x] Handle missing chat dependencies as explicit terminal error events instead of page-level 503; real recording submission retained the screen and showed a persistent alert. 13 regression tests passed.
 
 ## Cartesia voice connection
 - [x] Connect authenticated Cartesia voice catalogue and speech generation, keeping credentials private.
