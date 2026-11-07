@@ -445,6 +445,9 @@ export function buildTranscript(events: RawEvent[], lang: Lang, running: boolean
         const s = callSteps.get(f.callId);
         if (s) s.status = f.ok ? "done" : "error";
         const p = payloadOf(f.result);
+        if (p?.type === "ceyo.file" && typeof p.id === "string") {
+          t.cards.push({ kind: "file", id: p.id, name: String(p.name || "File") });
+        }
         if (p?.type === "megsy.agent_proposal") {
           const proposal = agentProposalSchema.safeParse(p.proposal);
           if (proposal.success) t.cards.push({ kind: "agent-proposal", id: f.callId, proposal: { name: proposal.data.name || "", description: proposal.data.description || "", prompt: proposal.data.prompt || "", color: proposal.data.color || "ocean" } });
