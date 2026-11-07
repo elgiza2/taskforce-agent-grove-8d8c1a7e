@@ -1,9 +1,9 @@
 # Roadmap
 
 ## Voice call repair — 2026-11-07 09:10 UTC
-- [ ] Reproduce missing automatic voice replies and repair listening/reply playback lifecycle.
-- [ ] Make calls circular and neutral; restore/clamp expanded calls inside conversation on mobile.
-- [ ] Verify recorded speech → agent → audible response, minimize/restore near screen edges; update README.
+- [x] Reproduced manual Record/Stop requirement: automatic speech-ended submit and post-playback listening added; fixed stale-error suppression and persistent audio playback with manual autoplay recovery.
+- [x] Circular neutral call; legacy dialog blue shadow isolated, restore/resize clamped inside conversation.
+- [x] Test account: automatic recorded Arabic speech → transcription 200 → agent 15 → speech 200 and actual playback without autoplay bypass; minimize/drag/restore inside 434×764 and desktop checked, no page errors. 22 targeted tests passed; README updated. Physical phone/iOS/Telegram microphone remains unverified.
 
 ## Pricing, navigation, calls and chat media — 2026-11-07
 - [x] Pricing fits 434×764 for all three plans; preserve prices, cache completed setup in-session and add restrained navigation animation without account-loading text.
@@ -45,7 +45,7 @@
 - [x] Connect authenticated Cartesia voice catalogue and speech generation, keeping credentials private.
 - [x] Add voice/language choice, playable downloadable replies, and microphone recording support in current chat/calls.
 - [x] Test real Arabic/English generation, endpoint security and playback; 60 tests pass. Recorded speech was transcribed and sent through the signed-in call UI. See docs/cartesia-verification-2026-11-07.md.
-- [ ] Verify a complete new agent reply spoken during a call; provider block is removed, test remains open. Calls use record/stop turns, not full-duplex live audio.
+- [x] Complete new agent reply spoken in signed-in call; automatic speech-ended turns now verified locally, not full-duplex live audio or a physical-device test.
 
 ## Seven deep performance investigations and free voice services
 - [x] Complete seven independent source investigations and signed-in mobile/desktop performance measurements.

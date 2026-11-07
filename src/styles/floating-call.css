@@ -11,5 +11,9 @@
 .cx-call-cartesia[data-minimized=true] .cx-call-drag{top:-10px;z-index:2}
 .cx-call-restore{width:64px;height:64px;padding:0;border-radius:50%;color:var(--cv-ink);background:var(--cv-panel)}
 .cx-call audio{display:none}
+.cx-chat .cx-call.cx-call-cartesia[role=dialog]{border:0!important;box-shadow:none!important;outline:0!important;background:var(--cv-panel)!important;color:var(--cv-ink)!important;max-width:calc(100% - 16px);box-sizing:border-box}
+.cx-call.cx-call-cartesia[role=dialog] button{border:0!important;box-shadow:none!important;outline:0!important;background:var(--cv-active)!important;color:var(--cv-ink)!important}
+.cx-call.cx-call-cartesia[role=dialog] .cx-call-end{background:var(--cv-ink)!important;color:var(--cv-panel)!important}
+.cx-call.cx-call-cartesia[role=dialog] .cx-call-restore{background:var(--cv-panel)!important}
 @keyframes call-breathe{50%{transform:scale(.94)}}
 @media(prefers-reduced-motion:reduce){.cx-call-avatar{animation:none!important}}

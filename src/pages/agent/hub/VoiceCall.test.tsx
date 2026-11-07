@@ -7,6 +7,7 @@ vi.mock("@/lib/audio/voiceClient", () => ({ getSpeech: mocks.speech, microphoneR
 import { VoiceCallBar } from "./VoiceCall";
 beforeEach(() => {
   vi.stubGlobal("ResizeObserver", class { observe() {} disconnect() {} });
+  vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(() => {});
   mocks.record.mockResolvedValue({ stop: vi.fn(), result: new Promise(() => {}) });
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.clearAllMocks(); });
