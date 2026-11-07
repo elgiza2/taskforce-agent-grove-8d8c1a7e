@@ -21,7 +21,7 @@
 .ceyo-vault .ceyo-top h1 { font-size:18px;font-weight:500;letter-spacing:0; }
 .ceyo-vault .gx-round,.ceyo-plans .gx-round { width:44px;height:44px;padding:0;border:1px solid var(--cv-line);background:var(--cv-panel);color:var(--cv-ink);border-radius:999px; }
 .ceyo-vault .ceyo-scroll { padding:6px 16px 100px; }
-.ceyo-vault-tabs { display:flex;align-items:center;gap:4px;margin:0 0 18px;overflow-x:auto;scrollbar-width:none; }
+.agent-hub .ceyo-vault-tabs { display:flex;align-items:center;gap:4px;margin:0 0 18px;padding:0;border:0;box-shadow:none;background:transparent;border-radius:0;overflow-x:auto;scrollbar-width:none; }
 .ceyo-vault-tabs button { flex:none;gap:5px;height:38px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--cv-muted);font-size:14px;white-space:nowrap; }
 .ceyo-vault-tabs button[data-active=true] { background:var(--cv-active);color:var(--cv-ink); }
 .ceyo-vault-tabs button span { color:var(--cv-muted); }
@@ -56,7 +56,8 @@
 .ceyo-plans-brand-name { font-size:22px;font-weight:600;letter-spacing:0; }
 .ceyo-plans .ceyo-plans-title { font-size:24px!important;font-weight:400!important;line-height:1.4;letter-spacing:0;margin:20px 0 24px;color:var(--cv-ink); }
 .ceyo-plans .ceyo-plans-card { flex:1;display:flex;flex-direction:column;min-height:0;border:0!important;border-radius:26px 26px 0 0!important;background:var(--cv-pricing-panel)!important;padding:12px 12px 18px!important; }
-.ceyo-plans .ceyo-plans-tabs { flex:none;margin:0 0 24px!important;padding:4px;background:var(--cv-page)!important;border-radius:999px; }
+.ceyo-plans .ceyo-plans-tabs { flex:none;margin:0 0 18px!important;padding:4px;background:var(--cv-page)!important;border:0;box-shadow:none;border-radius:999px; }
+.ceyo-plans-benefits { flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding-bottom:18px; }
 .ceyo-plans .ceyo-plans-tabs button { height:40px;padding:0 8px;background:transparent;border:0;color:var(--cv-muted);font-size:15px; }
 .ceyo-plans .ceyo-plans-tabs button[data-on=true] { background:var(--cv-active)!important;color:var(--cv-ink); }
 .ceyo-plans .ceyo-plans-mult { margin:12px 8px 0;font-size:34px!important;font-weight:400!important;line-height:1.1;color:var(--cv-ink); }

@@ -320,6 +320,7 @@ function Plans({ nav }: { nav: Nav }) {
           <div className="ceyo-plans-tabs" role="tablist" aria-label="Plans">
             {PLANS.map((x, i) => <Button variant="ghost" key={x.id} type="button" role="tab" aria-selected={i === tab} data-on={i === tab} onClick={() => { setTab(i); setYearly(false); }}>{x.name}</Button>)}
           </div>
+          <div className="ceyo-plans-benefits">
           {p.base && <p className="ceyo-plans-muted ceyo-plans-base">Everything in {p.base}, and:</p>}
           <strong className="ceyo-plans-mult">{p.mult}</strong>
           <p className="ceyo-plans-sub">more usage than Free</p>
@@ -329,6 +330,7 @@ function Plans({ nav }: { nav: Nav }) {
           </div>)}
           <p className="ceyo-plans-muted ceyo-plans-gt">Our other apps</p>
           <ul><li className="ceyo-plans-muted">Coming soon</li></ul>
+          </div>
       <div className="ceyo-plans-foot">
         <div className="ceyo-plans-prices">
           <Button variant="ghost" type="button" aria-pressed={!yearly} data-on={!yearly} onClick={() => setYearly(false)}><b>${p.price}</b> <span>{p.yearly ? "monthly" : "billed monthly"}</span></Button>
