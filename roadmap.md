@@ -1,5 +1,11 @@
 # Roadmap
 
+## Pricing, navigation, calls and chat media — 2026-11-07
+- [ ] Fit pricing without scrolling; retain existing prices and improve page transitions without account-loading text.
+- [ ] Diagnose call/reply failures; add draggable/minimizable call UI that stays active when minimized.
+- [ ] Add useful file/media previews and wire Agent Sky generation only against its verified protocol; keep credentials server-side in Supabase.
+- [ ] Verify central flows using the supplied test account and update README with results and limitations.
+
 ## Company and legal pages — 2026-11-07
 - [x] Complete About, Contact, Privacy, Terms, Subscription Terms, Cookies and Security under Megsy LLC; remove unsupported deadlines/caps and disclose analytics/voice/encryption boundaries.
 - [x] Add public navigation, settings links and seven leaf metadata heads; all pages opened signed-out, internal navigation and mail contact verified, mobile/desktop screenshots checked, no page errors/overflow; routing test passed and build OK. README updated. Legal approval and hosted tracking configuration remain unverified.
