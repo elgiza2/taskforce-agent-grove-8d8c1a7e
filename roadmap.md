@@ -1,9 +1,9 @@
 # Roadmap
 
 ## Seven deep performance investigations and free voice services
-- [ ] Complete seven independent source investigations and signed-in mobile/desktop performance measurements.
-- [ ] Identify measured causes separately from unverified candidates and document prioritized remedies.
-- [ ] Compare official AI voice free allowances, Arabic support and account/payment limitations.
+- [x] Complete seven independent source investigations and signed-in mobile/desktop performance measurements.
+- [x] Identify measured causes separately from unverified candidates and document prioritized remedies in docs/performance-and-voice-2026-11-07.md; no performance changes applied in this diagnostic request.
+- [x] Compare official AI voice free allowances, Arabic support and account/payment limitations; provider connection and audio quality are not verified.
 
 ## Full verification and real computer — current request
 - [x] Sign in and check real home/history, settings, pricing, memory and Vault save/read-back; current chat failed on missing Cerebras configuration. See current verification report for exact coverage.
