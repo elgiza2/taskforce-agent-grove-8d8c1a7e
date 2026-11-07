@@ -1,5 +1,11 @@
 # Roadmap
 
+## Current completion pass — 2026-11-07 08:23 UTC
+- [ ] Verify the newly supplied provider keys with real signed-in chat, web reading and background delivery; record actual outcomes, not configuration assumptions.
+- [ ] Harden first-run account loading and retry-safe primary-bot creation; align onboarding with existing restrained theme.
+- [ ] Replace the stale README with an accurate successor-agent guide covering routing, data flow, encryption limits, operations and verification.
+- [ ] Reconcile this active task list with earlier blocked/superseded tasks and document remaining external blockers.
+
 ## Service credentials and Telegram operations
 - [ ] Add Telegram-initiated protected credential entry; keep raw values out of Telegram messages and database tables. Telegram connection verified; pending explicit operator identity and protected secret-storage access.
 - [x] Inventory configured secret names and current versus legacy service dependencies without values; see docs/service-credentials-inventory.md.
