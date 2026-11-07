@@ -308,9 +308,11 @@ export function HubChat({
   });
   useEffect(() => { if (!demo && !s.running) void refreshSessions(); }, [s.running, demo]);
   useEffect(() => {
+    // Refresh once when returning to the tab instead of polling every few seconds.
     if (demo || !sessionId || s.running) return;
-    const timer = window.setInterval(() => window.dispatchEvent(new Event("ceyo-action-completed")), 5000);
-    return () => window.clearInterval(timer);
+    const onVisible = () => { if (document.visibilityState === "visible") window.dispatchEvent(new Event("ceyo-action-completed")); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
   }, [demo, sessionId, s.running]);
   useEffect(() => {
     const err = lastAgent?.error || s.error;

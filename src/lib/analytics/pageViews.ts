@@ -88,7 +88,12 @@ export async function closePageView(): Promise<void> {
  * The row id is minted client-side so the insert needs no read-back — visitors
  * can write their own views but can never read anyone's.
  */
+// The page_views table is not part of the current backend; tracking stays off
+// until it exists so navigation does not fire failing requests.
+const TRACKING_ENABLED = false;
+
 export async function trackPageView(path: string): Promise<void> {
+  if (!TRACKING_ENABLED) return;
   await closePageView();
   startedAt = Date.now();
   const id = newId();

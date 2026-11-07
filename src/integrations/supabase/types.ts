@@ -543,6 +543,42 @@ export type Database = {
           },
         ]
       }
+      provider_api_keys: {
+        Row: {
+          api_key: string
+          cooldown_until: string | null
+          created_at: string
+          failure_count: number
+          id: string
+          last_error: string | null
+          last_used_at: string | null
+          provider: string
+          status: string
+        }
+        Insert: {
+          api_key: string
+          cooldown_until?: string | null
+          created_at?: string
+          failure_count?: number
+          id?: string
+          last_error?: string | null
+          last_used_at?: string | null
+          provider: string
+          status?: string
+        }
+        Update: {
+          api_key?: string
+          cooldown_until?: string | null
+          created_at?: string
+          failure_count?: number
+          id?: string
+          last_error?: string | null
+          last_used_at?: string | null
+          provider?: string
+          status?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string

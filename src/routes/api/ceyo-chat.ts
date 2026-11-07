@@ -1,3 +1,4 @@
+import { hasCerebrasKey } from "@/lib/keys/cerebrasKey";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { chatFailure } from "@/lib/ceyo/chatFailure";
@@ -12,7 +13,7 @@ export const Route = createFileRoute("/api/ceyo-chat")({ server: { handlers: {
     const { db, userId } = auth;
     const { data: conv } = await db.from("conversations").select("id,bot_id,group_id").eq("id", input.data.conversationId).eq("user_id", userId).maybeSingle();
     if (!conv) return new Response("Not found", { status: 404 });
-    if (!process.env.CEREBRAS_API_KEY?.trim()) return chatFailure("The agent service is not connected. Your message is saved, but the agent cannot reply yet.", "provider_not_configured");
+    if (!(await hasCerebrasKey())) return chatFailure("The agent service is not connected. Your message is saved, but the agent cannot reply yet.", "provider_not_configured");
     const [{ data: bot }, { data: profile }, { data: rows }] = await Promise.all([
       conv.bot_id ? db.from("bots").select("id,name,instructions").eq("id", conv.bot_id).eq("owner_id", userId).maybeSingle() : Promise.resolve({ data: null }),
       db.from("profiles").select("primary_bot_id").eq("id", userId).maybeSingle(),

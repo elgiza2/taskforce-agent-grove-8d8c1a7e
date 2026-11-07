@@ -134,10 +134,12 @@ export default function AgentHubPage({ demo = false }: { demo?: boolean }) {
       }).catch(() => {});
     };
     refreshGroups();
-    const timer = window.setInterval(refreshGroups, 5000);
+    const onFocus = () => { if (document.visibilityState === "visible") refreshGroups(); };
+    document.addEventListener("visibilitychange", onFocus);
+    const timer = 0;
     const onChange = () => { refreshGroups(); void loadWorkspace(true); };
     window.addEventListener("ceyo-workspace-changed", onChange);
-    return () => { active = false; window.clearInterval(timer); window.removeEventListener("ceyo-workspace-changed", onChange); };
+    return () => { active = false; void timer; document.removeEventListener("visibilitychange", onFocus); window.removeEventListener("ceyo-workspace-changed", onChange); };
   }, [userId, demo]);
 
   const updateLocal = useCallback((recipe: (current: HubLocalState) => HubLocalState) => {
