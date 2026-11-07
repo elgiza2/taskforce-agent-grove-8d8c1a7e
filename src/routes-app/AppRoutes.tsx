@@ -30,8 +30,8 @@ const home = <Navigate to="/" replace />;
 /** Ceyo: landing, sign-in, the bot home and settings. Everything else returns home. */
 export const AppRoutes = (_props: { currentUserId: string | null }) => (
   <>
-    <Route path="/" element={guard(<OnboardingGate><AgentHubPage /></OnboardingGate>, "/welcome")} />
-    <Route path="/index" element={guard(<OnboardingGate><AgentHubPage /></OnboardingGate>, "/welcome")} />
+    <Route path="/" element={guard(<OnboardingGate><AgentHubPage /></OnboardingGate>, "/auth?mode=signup")} />
+    <Route path="/index" element={guard(<OnboardingGate><AgentHubPage /></OnboardingGate>, "/auth?mode=signup")} />
     <Route path="/welcome" element={<CeyoLanding />} />
     <Route path="/landing" element={<CeyoLanding />} />
     <Route path="/onboarding" element={guard(<OnboardingPage />)} />
