@@ -175,4 +175,4 @@
 
 - [x] Fix lag + reply restarting from the beginning (group chat stream)
 - [x] Home header: transparent, no borders, floating buttons
-- [ ] Replace Inngest with free built-in background jobs
+- [x] Replace Inngest with free built-in background jobs

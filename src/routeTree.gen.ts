@@ -30,6 +30,7 @@ import { Route as ApiVoiceRouteImport } from './routes/api/voice'
 import { Route as ApiVoiceTranscribeRouteImport } from './routes/api/voice-transcribe'
 import { Route as ApiWebSearchRouteImport } from './routes/api/web-search'
 import { Route as ApiAgentSplatRouteImport } from './routes/api/agent.$'
+import { Route as ApiPublicCeyoJobsRouteImport } from './routes/api/public/ceyo-jobs'
 import { Route as ApiPublicCeyoRoutinesRouteImport } from './routes/api/public/ceyo-routines'
 import { Route as ApiPublicFxRouteImport } from './routes/api/public/fx'
 import { Route as ApiPublicGeoRouteImport } from './routes/api/public/geo'
@@ -145,6 +146,11 @@ const ApiAgentSplatRoute = ApiAgentSplatRouteImport.update({
   path: '/api/agent/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCeyoJobsRoute = ApiPublicCeyoJobsRouteImport.update({
+  id: '/api/public/ceyo-jobs',
+  path: '/api/public/ceyo-jobs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicCeyoRoutinesRoute = ApiPublicCeyoRoutinesRouteImport.update({
   id: '/api/public/ceyo-routines',
   path: '/api/public/ceyo-routines',
@@ -216,6 +222,7 @@ export interface FileRoutesByFullPath {
   '/api/voice-transcribe': typeof ApiVoiceTranscribeRoute
   '/api/web-search': typeof ApiWebSearchRoute
   '/api/agent/$': typeof ApiAgentSplatRoute
+  '/api/public/ceyo-jobs': typeof ApiPublicCeyoJobsRoute
   '/api/public/ceyo-routines': typeof ApiPublicCeyoRoutinesRoute
   '/api/public/fx': typeof ApiPublicFxRoute
   '/api/public/geo': typeof ApiPublicGeoRoute
@@ -248,6 +255,7 @@ export interface FileRoutesByTo {
   '/api/voice-transcribe': typeof ApiVoiceTranscribeRoute
   '/api/web-search': typeof ApiWebSearchRoute
   '/api/agent/$': typeof ApiAgentSplatRoute
+  '/api/public/ceyo-jobs': typeof ApiPublicCeyoJobsRoute
   '/api/public/ceyo-routines': typeof ApiPublicCeyoRoutinesRoute
   '/api/public/fx': typeof ApiPublicFxRoute
   '/api/public/geo': typeof ApiPublicGeoRoute
@@ -281,6 +289,7 @@ export interface FileRoutesById {
   '/api/voice-transcribe': typeof ApiVoiceTranscribeRoute
   '/api/web-search': typeof ApiWebSearchRoute
   '/api/agent/$': typeof ApiAgentSplatRoute
+  '/api/public/ceyo-jobs': typeof ApiPublicCeyoJobsRoute
   '/api/public/ceyo-routines': typeof ApiPublicCeyoRoutinesRoute
   '/api/public/fx': typeof ApiPublicFxRoute
   '/api/public/geo': typeof ApiPublicGeoRoute
@@ -315,6 +324,7 @@ export interface FileRouteTypes {
     | '/api/voice-transcribe'
     | '/api/web-search'
     | '/api/agent/$'
+    | '/api/public/ceyo-jobs'
     | '/api/public/ceyo-routines'
     | '/api/public/fx'
     | '/api/public/geo'
@@ -347,6 +357,7 @@ export interface FileRouteTypes {
     | '/api/voice-transcribe'
     | '/api/web-search'
     | '/api/agent/$'
+    | '/api/public/ceyo-jobs'
     | '/api/public/ceyo-routines'
     | '/api/public/fx'
     | '/api/public/geo'
@@ -379,6 +390,7 @@ export interface FileRouteTypes {
     | '/api/voice-transcribe'
     | '/api/web-search'
     | '/api/agent/$'
+    | '/api/public/ceyo-jobs'
     | '/api/public/ceyo-routines'
     | '/api/public/fx'
     | '/api/public/geo'
@@ -412,6 +424,7 @@ export interface RootRouteChildren {
   ApiVoiceTranscribeRoute: typeof ApiVoiceTranscribeRoute
   ApiWebSearchRoute: typeof ApiWebSearchRoute
   ApiAgentSplatRoute: typeof ApiAgentSplatRoute
+  ApiPublicCeyoJobsRoute: typeof ApiPublicCeyoJobsRoute
   ApiPublicCeyoRoutinesRoute: typeof ApiPublicCeyoRoutinesRoute
   ApiPublicFxRoute: typeof ApiPublicFxRoute
   ApiPublicGeoRoute: typeof ApiPublicGeoRoute
@@ -572,6 +585,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAgentSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/ceyo-jobs': {
+      id: '/api/public/ceyo-jobs'
+      path: '/api/public/ceyo-jobs'
+      fullPath: '/api/public/ceyo-jobs'
+      preLoaderRoute: typeof ApiPublicCeyoJobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/ceyo-routines': {
       id: '/api/public/ceyo-routines'
       path: '/api/public/ceyo-routines'
@@ -660,6 +680,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiVoiceTranscribeRoute: ApiVoiceTranscribeRoute,
   ApiWebSearchRoute: ApiWebSearchRoute,
   ApiAgentSplatRoute: ApiAgentSplatRoute,
+  ApiPublicCeyoJobsRoute: ApiPublicCeyoJobsRoute,
   ApiPublicCeyoRoutinesRoute: ApiPublicCeyoRoutinesRoute,
   ApiPublicFxRoute: ApiPublicFxRoute,
   ApiPublicGeoRoute: ApiPublicGeoRoute,
