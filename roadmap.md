@@ -1,5 +1,9 @@
 # Roadmap
 
+## Company and legal pages — 2026-11-07
+- [ ] Complete About, Contact, Privacy, Terms, Subscription Terms, Cookies and Security pages with verified company/product facts.
+- [ ] Add public navigation, page-specific metadata and mobile/desktop verification; update README without claiming legal approval.
+
 ## Current completion pass — 2026-11-07 08:23 UTC
 - [x] Replace the cancelled Telegram connector request with Supabase Vault storage and direct Telegram calls; getMe, webhook, send and service-only Vault permissions verified. No new Lovable credentials.
 - [x] Verify signed-in calculation (229.74), Example Domain reading and completed background report saved/read through chat. Composio pool configured; external account execution still awaits owner authorization.
