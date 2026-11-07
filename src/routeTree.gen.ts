@@ -30,10 +30,10 @@ import { Route as ApiVoiceRouteImport } from './routes/api/voice'
 import { Route as ApiVoiceTranscribeRouteImport } from './routes/api/voice-transcribe'
 import { Route as ApiWebSearchRouteImport } from './routes/api/web-search'
 import { Route as ApiAgentSplatRouteImport } from './routes/api/agent.$'
+import { Route as ApiPublicCeyoJobsRouteImport } from './routes/api/public/ceyo-jobs'
 import { Route as ApiPublicCeyoRoutinesRouteImport } from './routes/api/public/ceyo-routines'
 import { Route as ApiPublicFxRouteImport } from './routes/api/public/fx'
 import { Route as ApiPublicGeoRouteImport } from './routes/api/public/geo'
-import { Route as ApiPublicInngestRouteImport } from './routes/api/public/inngest'
 import { Route as ApiPublicRemindersTickRouteImport } from './routes/api/public/reminders-tick'
 import { Route as ApiPublicTelegramKeysRouteImport } from './routes/api/public/telegram-keys'
 import { Route as ApiPublicAgentToolsTokenRouteImport } from './routes/api/public/agent-tools.$token'
@@ -145,6 +145,11 @@ const ApiAgentSplatRoute = ApiAgentSplatRouteImport.update({
   path: '/api/agent/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCeyoJobsRoute = ApiPublicCeyoJobsRouteImport.update({
+  id: '/api/public/ceyo-jobs',
+  path: '/api/public/ceyo-jobs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicCeyoRoutinesRoute = ApiPublicCeyoRoutinesRouteImport.update({
   id: '/api/public/ceyo-routines',
   path: '/api/public/ceyo-routines',
@@ -158,11 +163,6 @@ const ApiPublicFxRoute = ApiPublicFxRouteImport.update({
 const ApiPublicGeoRoute = ApiPublicGeoRouteImport.update({
   id: '/api/public/geo',
   path: '/api/public/geo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicInngestRoute = ApiPublicInngestRouteImport.update({
-  id: '/api/public/inngest',
-  path: '/api/public/inngest',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicRemindersTickRoute = ApiPublicRemindersTickRouteImport.update({
@@ -216,10 +216,10 @@ export interface FileRoutesByFullPath {
   '/api/voice-transcribe': typeof ApiVoiceTranscribeRoute
   '/api/web-search': typeof ApiWebSearchRoute
   '/api/agent/$': typeof ApiAgentSplatRoute
+  '/api/public/ceyo-jobs': typeof ApiPublicCeyoJobsRoute
   '/api/public/ceyo-routines': typeof ApiPublicCeyoRoutinesRoute
   '/api/public/fx': typeof ApiPublicFxRoute
   '/api/public/geo': typeof ApiPublicGeoRoute
-  '/api/public/inngest': typeof ApiPublicInngestRoute
   '/api/public/reminders-tick': typeof ApiPublicRemindersTickRoute
   '/api/public/telegram-keys': typeof ApiPublicTelegramKeysRoute
   '/api/public/agent-tools/$token': typeof ApiPublicAgentToolsTokenRoute
@@ -248,10 +248,10 @@ export interface FileRoutesByTo {
   '/api/voice-transcribe': typeof ApiVoiceTranscribeRoute
   '/api/web-search': typeof ApiWebSearchRoute
   '/api/agent/$': typeof ApiAgentSplatRoute
+  '/api/public/ceyo-jobs': typeof ApiPublicCeyoJobsRoute
   '/api/public/ceyo-routines': typeof ApiPublicCeyoRoutinesRoute
   '/api/public/fx': typeof ApiPublicFxRoute
   '/api/public/geo': typeof ApiPublicGeoRoute
-  '/api/public/inngest': typeof ApiPublicInngestRoute
   '/api/public/reminders-tick': typeof ApiPublicRemindersTickRoute
   '/api/public/telegram-keys': typeof ApiPublicTelegramKeysRoute
   '/api/public/agent-tools/$token': typeof ApiPublicAgentToolsTokenRoute
@@ -281,10 +281,10 @@ export interface FileRoutesById {
   '/api/voice-transcribe': typeof ApiVoiceTranscribeRoute
   '/api/web-search': typeof ApiWebSearchRoute
   '/api/agent/$': typeof ApiAgentSplatRoute
+  '/api/public/ceyo-jobs': typeof ApiPublicCeyoJobsRoute
   '/api/public/ceyo-routines': typeof ApiPublicCeyoRoutinesRoute
   '/api/public/fx': typeof ApiPublicFxRoute
   '/api/public/geo': typeof ApiPublicGeoRoute
-  '/api/public/inngest': typeof ApiPublicInngestRoute
   '/api/public/reminders-tick': typeof ApiPublicRemindersTickRoute
   '/api/public/telegram-keys': typeof ApiPublicTelegramKeysRoute
   '/api/public/agent-tools/$token': typeof ApiPublicAgentToolsTokenRoute
@@ -315,10 +315,10 @@ export interface FileRouteTypes {
     | '/api/voice-transcribe'
     | '/api/web-search'
     | '/api/agent/$'
+    | '/api/public/ceyo-jobs'
     | '/api/public/ceyo-routines'
     | '/api/public/fx'
     | '/api/public/geo'
-    | '/api/public/inngest'
     | '/api/public/reminders-tick'
     | '/api/public/telegram-keys'
     | '/api/public/agent-tools/$token'
@@ -347,10 +347,10 @@ export interface FileRouteTypes {
     | '/api/voice-transcribe'
     | '/api/web-search'
     | '/api/agent/$'
+    | '/api/public/ceyo-jobs'
     | '/api/public/ceyo-routines'
     | '/api/public/fx'
     | '/api/public/geo'
-    | '/api/public/inngest'
     | '/api/public/reminders-tick'
     | '/api/public/telegram-keys'
     | '/api/public/agent-tools/$token'
@@ -379,10 +379,10 @@ export interface FileRouteTypes {
     | '/api/voice-transcribe'
     | '/api/web-search'
     | '/api/agent/$'
+    | '/api/public/ceyo-jobs'
     | '/api/public/ceyo-routines'
     | '/api/public/fx'
     | '/api/public/geo'
-    | '/api/public/inngest'
     | '/api/public/reminders-tick'
     | '/api/public/telegram-keys'
     | '/api/public/agent-tools/$token'
@@ -412,10 +412,10 @@ export interface RootRouteChildren {
   ApiVoiceTranscribeRoute: typeof ApiVoiceTranscribeRoute
   ApiWebSearchRoute: typeof ApiWebSearchRoute
   ApiAgentSplatRoute: typeof ApiAgentSplatRoute
+  ApiPublicCeyoJobsRoute: typeof ApiPublicCeyoJobsRoute
   ApiPublicCeyoRoutinesRoute: typeof ApiPublicCeyoRoutinesRoute
   ApiPublicFxRoute: typeof ApiPublicFxRoute
   ApiPublicGeoRoute: typeof ApiPublicGeoRoute
-  ApiPublicInngestRoute: typeof ApiPublicInngestRoute
   ApiPublicRemindersTickRoute: typeof ApiPublicRemindersTickRoute
   ApiPublicTelegramKeysRoute: typeof ApiPublicTelegramKeysRoute
   ApiPublicAgentToolsTokenRoute: typeof ApiPublicAgentToolsTokenRoute
@@ -572,6 +572,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAgentSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/ceyo-jobs': {
+      id: '/api/public/ceyo-jobs'
+      path: '/api/public/ceyo-jobs'
+      fullPath: '/api/public/ceyo-jobs'
+      preLoaderRoute: typeof ApiPublicCeyoJobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/ceyo-routines': {
       id: '/api/public/ceyo-routines'
       path: '/api/public/ceyo-routines'
@@ -591,13 +598,6 @@ declare module '@tanstack/react-router' {
       path: '/api/public/geo'
       fullPath: '/api/public/geo'
       preLoaderRoute: typeof ApiPublicGeoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/inngest': {
-      id: '/api/public/inngest'
-      path: '/api/public/inngest'
-      fullPath: '/api/public/inngest'
-      preLoaderRoute: typeof ApiPublicInngestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/reminders-tick': {
@@ -660,10 +660,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiVoiceTranscribeRoute: ApiVoiceTranscribeRoute,
   ApiWebSearchRoute: ApiWebSearchRoute,
   ApiAgentSplatRoute: ApiAgentSplatRoute,
+  ApiPublicCeyoJobsRoute: ApiPublicCeyoJobsRoute,
   ApiPublicCeyoRoutinesRoute: ApiPublicCeyoRoutinesRoute,
   ApiPublicFxRoute: ApiPublicFxRoute,
   ApiPublicGeoRoute: ApiPublicGeoRoute,
-  ApiPublicInngestRoute: ApiPublicInngestRoute,
   ApiPublicRemindersTickRoute: ApiPublicRemindersTickRoute,
   ApiPublicTelegramKeysRoute: ApiPublicTelegramKeysRoute,
   ApiPublicAgentToolsTokenRoute: ApiPublicAgentToolsTokenRoute,

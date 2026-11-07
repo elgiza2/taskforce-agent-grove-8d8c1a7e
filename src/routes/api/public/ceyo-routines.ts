@@ -4,5 +4,6 @@ export const Route = createFileRoute("/api/public/ceyo-routines")({ server: { ha
   const secret = process.env.LOVABLE_CRON_SECRET;
   if (!secret || request.headers.get("authorization") !== `Bearer ${secret}`) return new Response("Unauthorized", { status: 401 });
   const { runDueRoutines } = await import("@/lib/ceyo/routines.server");
-  return Response.json({ results: await runDueRoutines() });
+  const { runStaleJobs } = await import("@/lib/ceyo/backgroundJobs.server");
+  return Response.json({ results: await runDueRoutines(), jobs: await runStaleJobs() });
 } } } });

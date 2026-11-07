@@ -34,7 +34,7 @@ export const Route = createFileRoute("/api/ceyo-chat")({ server: { handlers: {
       return (data || []).map((m) => m.content);
     };
     const [{ runAgentLoop }, { workspaceTools }, { agentPrompt }, { startLongTask, backgroundReady }] = await Promise.all([
-      import("@/lib/ceyo/agentLoop.server"), import("@/lib/ceyo/workspaceTools.server"), import("@/lib/ceyo/prompt"), import("@/lib/ceyo/inngest.server"),
+      import("@/lib/ceyo/agentLoop.server"), import("@/lib/ceyo/workspaceTools.server"), import("@/lib/ceyo/prompt"), import("@/lib/ceyo/backgroundJobs.server"),
     ]);
     const primary = profile?.primary_bot_id === conv.bot_id;
     const { data: memories, error: memoryError } = await db.from("agent_memories").select("content").eq("user_id", userId).order("created_at").limit(100);
@@ -58,8 +58,8 @@ export const Route = createFileRoute("/api/ceyo-chat")({ server: { handlers: {
         tools.push({ name: "start_long_task", def: { type: "function", function: { name: "start_long_task", description: "Run a long job in the background if the app is synchronized, otherwise execute it here.", parameters: { type: "object", properties: { goal: { type: "string" } }, required: ["goal"] } } }, run: async (args: unknown) => {
           const { goal } = z.object({ goal: z.string().min(1).max(4000) }).parse(args);
           try {
-            if (await backgroundReady()) {
-              const id = await startLongTask({ system, goal, userId, conversationId: conv.id, botId: conv.bot_id, cursorAt: lastSeen });
+            if (backgroundReady()) {
+              const id = await startLongTask({ origin: new URL(request.url).origin, system, goal, userId, conversationId: conv.id, botId: conv.bot_id, cursorAt: lastSeen });
               return `Background job started (${id}); the result will be saved to this chat.`;
             }
           } catch { console.error("Background start unavailable; continuing inline"); }
