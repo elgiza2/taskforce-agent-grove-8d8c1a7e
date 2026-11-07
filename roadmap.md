@@ -1,8 +1,8 @@
 # Roadmap
 
 ## Service credentials and Telegram operations
-- [ ] Inventory configured secret names and service dependencies without exposing values.
-- [ ] Define Telegram admin scope and secure credential entry outside chat; only authorized provider failover, never quota evasion.
+- [x] Inventory configured secret names and current versus legacy service dependencies without values; see docs/service-credentials-inventory.md.
+- [x] Define Telegram admin scope and secure credential entry outside chat; tested authorized failover classification, not wired into live providers yet.
 - [ ] Implement and verify approved administrative alerts and credential-pool failover; pending Telegram mode and connection.
 
 ## Agent voice messages and avatar changes
