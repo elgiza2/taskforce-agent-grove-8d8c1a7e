@@ -301,13 +301,21 @@ export const agentApi = {
   requests: async (_id: string) => ({ requests: [] as AgentRequest[], sessions: [] as any[] }),
   tasks: async () => ({ tasks: [] as { id: string; agentId: string; title: string | null; attention: string; statusLine: string | null; openRequests: number; helpers: number; lastActivityAt: string }[] }),
   taskSessions: async (_id: string) => ({ sessions: [] as { id: string }[] }),
-  media: async (_p: { kind: "image" | "video"; prompt: string; aspect?: string; duration?: number; model?: string; idempotencyKey?: string }): Promise<{ runId: string; token: string; model: string; status: string }> => {
-    throw new AgentApiError(501, "unavailable", "Image and video creation is coming soon.");
+  media: async (p: { kind: "image" | "video"; prompt: string; aspect?: string; duration?: number; model?: string; idempotencyKey?: string }): Promise<{ runId: string; token: string; model: string; status: string }> => {
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) throw new AgentApiError(401, "unauthorized", "Sign in required");
+    const response = await fetch("/api/agent/media", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${data.session.access_token}` }, body: JSON.stringify(p) });
+    const body = await response.json();
+    if (!response.ok) throw new AgentApiError(response.status, body.error?.code || "media_failed", body.error?.message || "Media generation failed");
+    return body;
   },
 };
 
-export async function mediaStatus(_runId: string, _token: string) {
-  return { status: "failed", urls: [] as string[], error: "Unavailable" };
+export async function mediaStatus(runId: string, token: string) {
+  const response = await fetch(`/api/public/media-status/${encodeURIComponent(runId)}?s=${encodeURIComponent(token)}`);
+  const body = await response.json();
+  if (!response.ok) throw new AgentApiError(response.status, "media_status_failed", body.error || "Could not check media");
+  return body as { status: string; urls: string[]; error?: string };
 }
 
 /* ---------------- events ---------------- */

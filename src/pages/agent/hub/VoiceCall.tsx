@@ -7,6 +7,7 @@ import { speechText } from "@/lib/audio/voiceSchema";
 import { BotAvatar, type HubLang } from "./HubParts";
 import type { AgentVoiceSettings } from "@/lib/audio/agentVoice";
 import { useVoiceChoice } from "./VoiceControls";
+import "@/styles/floating-call.css";
 
 /** Turn-based calls: explicit recording, authenticated transcription and Cartesia reply. */
 export function VoiceCallBar({ agent, lang, busy, lastReply, replyId, onSay, onEnd, settings, agentIds, replyError }: {
