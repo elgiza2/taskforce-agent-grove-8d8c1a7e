@@ -45,8 +45,8 @@
 .ceyo-vault-field span { color:var(--cv-muted);font-size:14px; }
 .ceyo-vault-field input { width:100%;min-width:0;padding:0;border:0;outline:none;background:transparent;color:var(--cv-ink);font-size:17px; }
 .ceyo-vault-editor .ceyo-vault-note { margin:0 16px; }
-.ceyo-vault-save { margin-top:auto;width:100%;min-height:48px;border-radius:999px;border:1px solid var(--cv-line);background:var(--cv-ink);color:var(--cv-pricing);font-size:16px; }
-.ceyo-vault-save:disabled { background:var(--cv-active);color:var(--cv-muted);opacity:1; }
+.ceyo-vault .ceyo-vault-save { margin-top:auto;width:100%;min-height:48px;border-radius:999px;border:1px solid var(--cv-line);background:var(--cv-ink)!important;color:var(--cv-pricing)!important;box-shadow:none!important;font-size:16px; }
+.ceyo-vault .ceyo-vault-save:disabled { background:var(--cv-active)!important;color:var(--cv-muted)!important;opacity:1; }
 .agent-hub.ceyo-page.ceyo-plans,.ceyo-plans .ceyo-scroll { background:var(--cv-pricing)!important;color:var(--cv-ink); }
 .ceyo-plans .ceyo-scroll { display:flex;flex-direction:column;max-width:680px;padding:calc(22px + max(env(safe-area-inset-top),var(--safe-top,0px))) 16px 0; }
 .ceyo-plans .ceyo-plans-close { top:calc(16px + max(env(safe-area-inset-top),var(--safe-top,0px)));right:18px; }
@@ -55,7 +55,7 @@
 .ceyo-plans .ceyo-brand-orb i { height:11px;width:4px;background:var(--cv-pricing); }
 .ceyo-plans-brand-name { font-size:22px;font-weight:600;letter-spacing:0; }
 .ceyo-plans .ceyo-plans-title { font-size:24px!important;font-weight:400!important;line-height:1.4;letter-spacing:0;margin:20px 0 24px;color:var(--cv-ink); }
-.ceyo-plans .ceyo-plans-card { flex:1;display:flex;flex-direction:column;min-height:0;border:0!important;border-radius:26px 26px 0 0!important;background:var(--cv-pricing-panel)!important;padding:12px 12px 18px!important; }
+.ceyo-plans .ceyo-plans-card { flex:1 0 auto;display:grid;grid-template-rows:auto minmax(0,1fr) auto;height:calc(100dvh - 170px - max(env(safe-area-inset-top),var(--safe-top,0px)));min-height:390px;border:0!important;border-radius:26px 26px 0 0!important;background:var(--cv-pricing-panel)!important;padding:12px 12px 18px!important; }
 .ceyo-plans .ceyo-plans-tabs { flex:none;margin:0 0 18px!important;padding:4px;background:var(--cv-page)!important;border:0;box-shadow:none;border-radius:999px; }
 .ceyo-plans-benefits { flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding-bottom:18px; }
 .ceyo-plans .ceyo-plans-tabs button { height:40px;padding:0 8px;background:transparent;border:0;color:var(--cv-muted);font-size:15px; }
@@ -80,7 +80,7 @@
 .ceyo-plans .ceyo-plans-legal { margin:12px 0 0;color:var(--cv-muted);font-size:11px;line-height:1.5; }
 @media(min-width:768px) {
   .ceyo-plans .ceyo-scroll { padding-top:36px; }
-  .ceyo-plans .ceyo-plans-card { padding:18px 24px 24px!important; }
+  .ceyo-plans .ceyo-plans-card { height:calc(100dvh - 200px);padding:18px 24px 24px!important; }
   .ceyo-plans .ceyo-plans-foot { margin:auto -24px -24px;padding-inline:24px; }
   .ceyo-plans .ceyo-plans-title { font-size:28px!important;margin-bottom:32px; }
   .ceyo-vault .ceyo-top { padding-top:28px;padding-bottom:36px; }
