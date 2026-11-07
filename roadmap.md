@@ -1,5 +1,15 @@
 # Roadmap
 
+## Full verification and real computer — current request
+- [x] Sign in and check real home/history, settings, pricing, memory and Vault save/read-back; current chat failed on missing Cerebras configuration. See current verification report for exact coverage.
+- [x] Repair account-loading recovery, unsafe execution and misleading controls; add regression tests, repeat affected live checks, and harden legacy source guards.
+- [ ] Restore current chat/web/integration configuration; blocked on the owner's existing provider connections/credentials.
+- [ ] Connect isolated computer execution; blocked on authorized execution-provider configuration and owner-scoped integration.
+- [ ] Finish agent-mediated file/group/delegation, voice/native/payment/scheduled tests; blocked on service/owner/platform configuration.
+- [ ] Verify legacy security fixes on the hosted backend and rotate the exposed provider credential; user-managed deployment/provider access unavailable here.
+- [ ] Complete transactional onboarding, /chat/not-found routing, canonical/legal review and legacy guest-memory/model-input security repairs.
+- [x] Record tested outcomes, source-versus-hosted distinction and remaining limitations in docs/current-verification-2026-11-07.md.
+
 ## Pricing and Vault reference redesign
 - [x] Match pricing layout and selection controls to the supplied screenshots without changing prices or payment behavior.
 - [x] Match Vault categories, list and add-item forms to the supplied screenshots while retaining account-scoped safe storage.

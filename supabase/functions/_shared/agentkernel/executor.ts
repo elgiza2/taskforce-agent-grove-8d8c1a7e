@@ -245,8 +245,7 @@ async function runCodeInIsolate(code: string, timeoutMs: number): Promise<string
 export async function runCode(code: string, timeoutMs = 60_000): Promise<string> {
   const viaWorker = await runCodeInWorker(code, timeoutMs);
   if (viaWorker !== null) return viaWorker;
-  const out = await runCodeInIsolate(code, timeoutMs);
-  return out.slice(0, 6000) || "(no output)";
+  return "Code execution unavailable: a permission-isolated worker or remote computer is required.";
 }
 
 

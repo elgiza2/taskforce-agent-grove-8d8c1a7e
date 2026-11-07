@@ -165,12 +165,12 @@ function Main({ nav }: { nav: Nav }) {
         <Row label="Usage" value={loading ? "…" : `${usage.used}%`} onClick={() => nav("/settings/usage")} />
         <Row label="Manage Subscription" onClick={() => nav("/settings/subscription")} />
         <Row label="Storage" sub="Files, memories and cache" onClick={() => nav("/settings/storage")} />
-        <Row label="Vault" sub="Logins, cards and contact info Ceyo can use" onClick={() => nav("/settings/vault")} />
+        <Row label="Vault" sub="Saved labels and contact info on this device" onClick={() => nav("/settings/vault")} />
       </Group>
       <Group><Row label="Connect apps" sub="Search plugins" onClick={() => nav("/settings/apps")} /></Group>
       <Group title="Agent">
         <Row label="Permissions" sub={permissionSummary(permissions)} onClick={() => nav("/settings/permissions")} />
-        <Row label="Set Time Zone Automatically" sub="Your agent's computer follows this device's time zone." checked={autoTz} onClick={() => flip("ceyo_auto_tz", !autoTz, setAutoTz)} right={<Toggle on={autoTz} />} />
+        <Row label="Set Time Zone Automatically" sub="Saved preference; no computer is connected." checked={autoTz} disabled right={<Toggle on={autoTz} />} />
         <Row label="Time Zone" value={tz} right={<span />} />
         <Row label="Agent Computer" onClick={() => nav("/settings/computer")} />
         <Row label="Manage your devices" onClick={() => nav("/settings/devices")} />
@@ -224,10 +224,7 @@ function Account({ nav }: { nav: Nav }) {
 
 function Usage({ nav }: { nav: Nav }) {
   const { credits, plan, loading } = useCredits() as { credits: number | null; plan: string; loading: boolean };
-  const [alerts, setAlerts] = useState(false);
-  useEffect(() => { setAlerts(localStorage.getItem("ceyo_usage_alerts") === "on"); }, []);
   const usage = usageFor(credits, plan);
-  const toggleAlerts = () => { const next = !alerts; setAlerts(next); localStorage.setItem("ceyo_usage_alerts", next ? "on" : "off"); toast.success(next ? "We'll warn you at 80% usage" : "Usage alerts off"); };
   return (
     <Shell title="Usage" back={() => nav("/settings")}>
       <div className="ceyo-usage-panel">
@@ -245,7 +242,7 @@ function Usage({ nav }: { nav: Nav }) {
       <Group>
         <Row label="Upgrade plan" sub="Get more usage every week" onClick={() => nav("/settings/plans")} />
         <Row label="Manage subscription" onClick={() => nav("/settings/subscription")} />
-        <Row label="Usage alerts" sub="Notify me when I reach 80%" checked={alerts} onClick={toggleAlerts} right={<Toggle on={alerts} />} />
+        <Row label="Usage alerts" sub="Not available yet" disabled right={<Toggle on={false} />} />
       </Group>
     </Shell>
   );
@@ -550,10 +547,10 @@ function Permissions({ nav }: { nav: Nav }) {
   </section>;
   return (
     <Shell title="Permissions" back={() => nav("/settings")}>
-      <Group><Row label="Auto-Review" sub="Review Ceyo Bot actions based on custom rules" checked={preferences.autoReview} onClick={() => save({ ...preferences, autoReview: !preferences.autoReview })} right={<Toggle on={preferences.autoReview} />} /></Group>
-      {section("ask", "Always Ask", "Stop and ask when an action matches these rules")}
-      {section("allow", "Allow without Asking", "Continue automatically when an action matches these rules")}
-      <p className="ceyo-note ceyo-permission-note">Rules are saved on this device.</p>
+      <Group><Row label="Auto-Review" sub="Not connected to agent actions" checked={false} disabled right={<Toggle on={false} />} /></Group>
+      {section("ask", "Always Ask", "Saved preferences for actions you want reviewed")}
+      {section("allow", "Allow without Asking", "Saved preferences; these do not authorize actions")}
+      <p className="ceyo-note ceyo-permission-note">Rules are saved only on this device and are not enforced. External actions still require their own approval.</p>
     </Shell>
   );
 }
@@ -681,8 +678,7 @@ function Feedback({ nav }: { nav: Nav }) {
   const send = () => {
     const body = encodeURIComponent(`${text.trim()}\n\nBot: ${bot}`);
     window.location.href = `mailto:support@ceyo.si?subject=Ceyo%20feedback&body=${body}`;
-    toast.success("Thanks — your feedback is on its way");
-    nav("/settings");
+    toast("Send the draft in your email app to submit feedback.");
   };
 
   return (

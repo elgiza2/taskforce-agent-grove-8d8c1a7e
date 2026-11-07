@@ -8,6 +8,7 @@ export const Route = createFileRoute("/api/ceyo-chat")({ server: { handlers: {
     if (!auth) return new Response("Unauthorized", { status: 401 });
     const input = z.object({ conversationId: z.string().uuid() }).safeParse(await request.json().catch(() => null));
     if (!input.success) return new Response("Invalid conversation", { status: 400 });
+    if (!process.env.CEREBRAS_API_KEY?.trim()) return Response.json({ error: "The agent service is not configured. Your message is saved; reconnect the existing AI provider before trying again." }, { status: 503 });
     const { db, userId } = auth;
     const { data: conv } = await db.from("conversations").select("id,bot_id,group_id").eq("id", input.data.conversationId).eq("user_id", userId).maybeSingle();
     if (!conv) return new Response("Not found", { status: 404 });
