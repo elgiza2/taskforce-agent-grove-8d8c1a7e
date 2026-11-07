@@ -694,7 +694,7 @@ const AuthPage = () => {
           authMode={creatingPassword ? "signup" : "signin"}
           onGoogle={handleGoogleLogin}
           onGithub={handleGithubLogin}
-          onClose={() => navigate("/welcome")}
+          onClose={() => navigate("/auth?mode=signup")}
           onBack={() => { if (!isSubmitting) setStep(step === "password" || creatingPassword ? "email" : "intro1"); }}
           onEmail={() => setStep("email")}
           onTelegram={undefined}
