@@ -16,10 +16,10 @@ type Loader = () => Promise<unknown>;
 const NEXT_HOPS: Array<{ match: RegExp; hops: Loader[] }> = [
   // Landing / welcome → sign in, then the app itself.
   {
-    match: /^\/(welcome)?$/,
+    match: /^\/(index)?$/,
     hops: [
-      () => import("@/pages/auth/AuthPage"),
-      () => import("@/pages/agent/AgentHubPage"),
+      () => import("@/pages/ceyo/CeyoSettings"),
+      () => import("@/pages/legal/LegalDocPage"),
     ],
   },
   // Auth → the chat is the only destination after signing in.

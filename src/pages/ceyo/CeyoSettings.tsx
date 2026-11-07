@@ -316,7 +316,7 @@ function Plans({ nav }: { nav: Nav }) {
       <Button variant="ghost" size="icon" type="button" className="gx-round ceyo-plans-close" aria-label="Close" onClick={() => nav("/settings")}><X size={20} /></Button>
       <div className="ceyo-scroll">
         <div className="ceyo-plans-brand"><span className="ceyo-brand-orb" aria-hidden="true"><i /><i /></span><span className="ceyo-plans-brand-name">Ceyo</span></div>
-        <h1 className="ceyo-plans-title">One subscription.<br />Access to everything.</h1>
+        <h1 className="ceyo-plans-title">Choose your plan</h1>
         <div className="ceyo-plans-card">
           <div className="ceyo-plans-tabs" role="tablist" aria-label="Plans">
             {PLANS.map((x, i) => <Button variant="ghost" key={x.id} type="button" role="tab" aria-selected={i === tab} data-on={i === tab} onClick={() => { setTab(i); setYearly(false); }}>{x.name}</Button>)}
@@ -329,8 +329,6 @@ function Plans({ nav }: { nav: Nav }) {
             <p className="ceyo-plans-muted ceyo-plans-gt">{g.title}</p>
             <ul>{g.items.map((it) => <li key={it}><Check size={16} />{it}</li>)}</ul>
           </div>)}
-          <p className="ceyo-plans-muted ceyo-plans-gt">Our other apps</p>
-          <ul><li className="ceyo-plans-muted">Coming soon</li></ul>
           </div>
       <div className="ceyo-plans-foot">
         <div className="ceyo-plans-prices">
@@ -338,7 +336,7 @@ function Plans({ nav }: { nav: Nav }) {
           {p.yearly > 0 && <Button variant="ghost" type="button" aria-pressed={yearly} data-on={yearly} onClick={() => setYearly(true)}><b>${p.yearly}</b> <span>yearly</span><small>${(p.yearly / 12).toFixed(2)}/mo · <em>Save 17%</em></small></Button>}
         </div>
         <Button variant="ghost" type="button" className="ceyo-plans-cta" data-current={current} disabled={current} onClick={() => toast("Payments are coming soon")}>{current ? "Current plan" : "Change plan"}</Button>
-        <p className="ceyo-plans-legal">Subscriptions renew automatically until cancelled. Cancel anytime at least 24 hours before renewal. Prices may change.</p>
+        <p className="ceyo-plans-legal">Purchases aren’t available yet. <a href="/subscription-terms">Subscription terms</a></p>
       </div>
         </div>
       </div>

@@ -11,7 +11,7 @@ export const Route = createFileRoute("/api/voice-transcribe")({ server: { handle
       if (!(file instanceof Blob) || !file.size || file.size > 20 * 1024 * 1024 || !/^(audio|video)\//.test(file.type))
         return Response.json({ error: "Upload an audio recording smaller than 20 MB." }, { status: 400 });
       const { transcribeAudio } = await import("@/lib/audio/transcribeCore");
-      const { status, body } = await transcribeAudio(file, { language: String(form.get("language") || "en"), filename: "recording.webm" });
+      const { status, body } = await transcribeAudio(file, { language: String(form.get("language") || "en"), filename: file.type.includes("mp4") ? "recording.mp4" : file.type.includes("wav") ? "recording.wav" : "recording.webm" });
       return Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
     } catch { return Response.json({ error: "Could not transcribe the recording." }, { status: 502 }); }
   },
