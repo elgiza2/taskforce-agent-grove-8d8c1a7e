@@ -21,7 +21,7 @@
 .ob-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
 .ob-opt{border:1px solid var(--cv-line);background:var(--cv-pricing-panel);border-radius:8px;padding:16px;text-align:start;color:var(--cv-ink);font-size:15px;font-weight:600;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,background .2s}
 .ob-opt.on{border-color:var(--cv-ink);background:var(--cv-selected)}
-.ob .ob-btn{width:100%;margin-top:auto;height:56px;border-radius:999px;border:0;background:var(--cv-ink)!important;color:var(--cv-pricing)!important;box-shadow:none!important;font-size:16px;font-weight:600;transition:opacity .2s,transform .15s}
+html body .ob .ob-btn{width:100%;margin-top:auto;height:56px;border-radius:999px;border:0;background:var(--cv-ink)!important;color:var(--cv-pricing)!important;box-shadow:none!important;font-size:16px;font-weight:600;transition:opacity .2s,transform .15s}
 .ob-main>.ob-btn{margin-top:auto}.ob-btn:active{transform:scale(.98)}.ob-btn:disabled{opacity:.25}
 .ob-main .ob-opts+.ob-btn{margin-top:auto}
 /* Main-bot step: reuse the bot creator inside the same black flow */
