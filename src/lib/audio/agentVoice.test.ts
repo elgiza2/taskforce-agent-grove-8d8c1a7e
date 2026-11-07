@@ -13,6 +13,16 @@ describe("agent voice rules", () => {
   it("assigns distinct voices to different bots", () => {
     expect(new Set(Object.values(assignAgentVoices(voices, ["a", "b", "c"]))).size).toBe(3);
   });
+  it("keeps persisted voices when a bot is added or removed", () => {
+    const existing = assignAgentVoices(voices, ["b", "c"]);
+    const next = assignAgentVoices(voices, ["a", "b", "c"], existing);
+    expect(next.b).toBe(existing.b);
+    expect(next.c).toBe(existing.c);
+    expect(new Set(Object.values(next)).size).toBe(3);
+  });
+  it("keeps an automatic saved voice even when the catalogue grows", () => {
+    expect(resolveVoice(voices, "bot", ["bot"], { ...settings, autoVoiceId: "2" }, "ar").voiceId).toBe("2");
+  });
   it("keeps a bot voice fixed across language and catalogue order", () => {
     expect(resolveVoice(voices, "bot", ["other", "bot"], settings, "ar").voiceId).toBe(resolveVoice([...voices].reverse(), "bot", ["bot", "other"], settings, "en").voiceId);
   });
