@@ -460,6 +460,7 @@ export function HubChat({
           <span><strong>{toast.title}</strong>{toast.body && <small>{toast.body}</small>}</span>
         </div>
       )}
+      {s.error && <div className="cx-chat-error" role="alert"><CircleAlert size={18} /><span>{s.error}</span></div>}
 
       <div
         className="cx-scroll"

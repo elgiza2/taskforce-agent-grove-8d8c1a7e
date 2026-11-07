@@ -72,6 +72,7 @@ export function useAgentSession(sessionId: string | null, lang: Lang) {
               retry = 0;
               if (!e.id || seen.current.has(e.id)) return;
               if (e.type === "session.status_running") setRunning(true);
+              if (e.type === "session.error") setError(typeof (e as any).message === "string" ? (e as any).message : "The agent could not reply. Your message is saved.");
               if (e.type === "session.status_idle" || e.type === "session.error") {
                 setRunning(false);
                 setStopping(false);
