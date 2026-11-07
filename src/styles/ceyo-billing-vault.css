@@ -47,6 +47,8 @@
 .ceyo-vault-editor .ceyo-vault-note { margin:0 16px; }
 .ceyo-vault .ceyo-vault-save { margin-top:auto;width:100%;min-height:48px;border-radius:999px;border:1px solid var(--cv-line);background:var(--cv-ink)!important;color:var(--cv-pricing)!important;box-shadow:none!important;font-size:16px; }
 .ceyo-vault .ceyo-vault-save:disabled { background:var(--cv-active)!important;color:var(--cv-muted)!important;opacity:1; }
+.agent-hub.ceyo-vault button.ceyo-vault-save { background-image:none!important;box-shadow:none!important; }
+.agent-hub.ceyo-vault .ceyo-vault-tabs,.agent-hub.ceyo-plans .ceyo-plans-tabs { border:0!important;box-shadow:none!important; }
 .agent-hub.ceyo-page.ceyo-plans,.ceyo-plans .ceyo-scroll { background:var(--cv-pricing)!important;color:var(--cv-ink); }
 .ceyo-plans .ceyo-scroll { display:flex;flex-direction:column;max-width:680px;padding:calc(22px + max(env(safe-area-inset-top),var(--safe-top,0px))) 16px 0; }
 .ceyo-plans .ceyo-plans-close { top:calc(16px + max(env(safe-area-inset-top),var(--safe-top,0px)));right:18px; }
