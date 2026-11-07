@@ -653,6 +653,19 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      complete_onboarding: {
+        Args: {
+          p_age: number
+          p_avatar: string
+          p_bot_name: string
+          p_description: string
+          p_instructions: string
+          p_look: Json
+          p_name: string
+          p_type: string
+        }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

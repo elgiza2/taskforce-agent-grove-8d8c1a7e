@@ -5,6 +5,7 @@ import { Camera, User, Code2, Palette, GraduationCap, Briefcase, Clapperboard, H
 import { supabase } from "@/integrations/supabase/client";
 import { forceDarkTheme } from "@/lib/theme";
 import { AgentForm, type AgentFormValue } from "@/pages/agent/hub/HubPanels";
+import { Button } from "@/components/ui/button";
 import "@/styles/onboarding.css";
 
 const TYPES = [
@@ -22,7 +23,10 @@ async function toAvatar(file: File): Promise<string> {
   const img = await createImageBitmap(file);
   const s = 256, c = document.createElement("canvas"); c.width = c.height = s;
   const k = Math.max(s / img.width, s / img.height), w = img.width * k, h = img.height * k;
-  c.getContext("2d")!.drawImage(img, (s - w) / 2, (s - h) / 2, w, h);
+  const context = c.getContext("2d");
+  if (!context) throw new Error("Couldn't prepare your photo.");
+  context.drawImage(img, (s - w) / 2, (s - h) / 2, w, h);
+  img.close();
   return c.toDataURL("image/jpeg", 0.85);
 }
 
@@ -44,9 +48,9 @@ function AgeWheel({ value, onChange }: { value: number; onChange: (n: number) =>
         {AGES.map((a, i) => {
           const d = Math.min(Math.abs(i * ROW - scrollTop) / ROW, 2.5);
           return (
-            <button key={a} type="button" role="option" aria-selected={a === value} className="ob-wheel-item"
+            <Button variant="ghost" key={a} type="button" role="option" aria-selected={a === value} className="ob-wheel-item"
               style={{ opacity: 1 - d * 0.32, transform: `scale(${1 - d * 0.1}) rotateX(${(i * ROW - scrollTop) / ROW * -18}deg)` }}
-              onClick={() => ref.current?.scrollTo({ top: i * ROW, behavior: "smooth" })}>{a}</button>
+              onClick={() => ref.current?.scrollTo({ top: i * ROW, behavior: "smooth" })}>{a}</Button>
           );
         })}
         <div style={{ height: ROW }} />
@@ -65,41 +69,57 @@ export default function OnboardingPage() {
   const [type, setType] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [retry, setRetry] = useState(0);
   const file = useRef<HTMLInputElement>(null);
 
   useEffect(() => forceDarkTheme(), []);
   useEffect(() => {
-    supabase.auth.getUser().then(async ({ data }) => {
-      if (!data.user) return nav("/auth", { replace: true });
-      setUid(data.user.id);
-      const { data: p } = await supabase.from("profiles").select("display_name,avatar_url,onboarding_completed").eq("id", data.user.id).maybeSingle();
-      if (p?.onboarding_completed) return nav("/", { replace: true });
-      if (p?.display_name) setName(p.display_name);
-      if (p?.avatar_url) setAvatar(p.avatar_url);
-    });
-  }, [nav]);
+    let alive = true;
+    setLoading(true); setLoadError("");
+    void (async () => {
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (!alive) return;
+        if (error) throw error;
+        if (!data.user) return nav("/auth?mode=signup", { replace: true });
+        const { data: p, error: profileError } = await supabase.from("profiles").select("display_name,avatar_url,onboarding_completed").eq("id", data.user.id).maybeSingle();
+        if (profileError || !p) throw new Error("Profile unavailable");
+        if (!alive) return;
+        if (p.onboarding_completed) return nav("/", { replace: true });
+        setUid(data.user.id);
+        if (p.display_name) setName(p.display_name);
+        if (p.avatar_url) setAvatar(p.avatar_url);
+      } catch { if (alive) setLoadError("Couldn't load your account. Try again."); }
+      finally { if (alive) setLoading(false); }
+    })();
+    return () => { alive = false; };
+  }, [nav, retry]);
 
   const finish = async (v: AgentFormValue) => {
-    if (!uid) return;
+    if (!uid || busy) return;
     setBusy(true); setErr("");
-    const { data: bot, error: e1 } = await supabase.from("bots").insert({
-      owner_id: uid, name: v.name, description: v.description, instructions: v.prompt,
-      category: "primary", look: (v.look ?? {}) as never,
-    }).select("id").single();
-    if (e1 || !bot) { setBusy(false); return setErr("Couldn't create your bot. Try again."); }
-    const { error: e2 } = await supabase.from("profiles").update({
-      display_name: name.trim(), avatar_url: avatar, age, user_type: type,
-      primary_bot_id: bot.id, onboarding_completed: true,
-    }).eq("id", uid);
-    setBusy(false);
-    if (e2) return setErr("Couldn't save your profile. Try again.");
-    nav("/", { replace: true });
+    try {
+      const { data, error } = await supabase.rpc("complete_onboarding", {
+        p_name: name.trim(), p_avatar: avatar ?? "", p_age: age, p_type: type,
+        p_bot_name: v.name, p_description: v.description ?? "", p_instructions: v.prompt ?? "", p_look: (v.look ?? {}) as never,
+      });
+      if (error || !data) throw new Error("Setup failed");
+      nav("/", { replace: true });
+    } catch { setErr("Couldn't finish setup. Your changes weren't partially saved. Try again."); }
+    finally { setBusy(false); }
   };
+
+  if (loading || loadError) return <div className="ob"><main className="ob-main ob-recovery">
+    <h1>Ceyo</h1><p role={loadError ? "alert" : "status"} className="ob-sub">{loadError || "Loading your account…"}</p>
+    {loadError && <Button variant="neutral" className="ob-btn" onClick={() => setRetry((v) => v + 1)}>Retry</Button>}
+  </main></div>;
 
   return (
     <div className="ob" dir="ltr">
       <header className="ob-top">
-        {step > 0 ? <button className="ob-back" onClick={() => setStep(step - 1)} aria-label="Back"><ArrowLeft size={20} /></button> : <span style={{ width: 40 }} />}
+        {step > 0 ? <Button variant="ghost" size="icon" className="ob-back" disabled={busy} onClick={() => setStep(step - 1)} aria-label="Back"><ArrowLeft size={20} /></Button> : <span style={{ width: 40 }} />}
         <div className="ob-dots">{[0, 1, 2].map((d) => <span key={d} className={d === step ? "on" : ""} />)}</div>
         <span style={{ width: 40 }} />
       </header>
@@ -115,15 +135,16 @@ export default function OnboardingPage() {
           <>
             <h1>Tell us about you</h1>
             <p className="ob-sub">So your bots know who they're helping.</p>
-            <button type="button" className="ob-photo" onClick={() => file.current?.click()} aria-label="Your photo">
+            <Button variant="ghost" type="button" className="ob-photo" onClick={() => file.current?.click()} aria-label="Your photo">
               {avatar ? <img src={avatar} alt="" /> : <span className="ob-initial">{name.trim()[0]?.toUpperCase() || <User size={34} />}</span>}
               <span className="ob-photo-badge"><Camera size={14} /></span>
-            </button>
-            <input ref={file} type="file" accept="image/*" hidden onChange={async (e) => { const f = e.target.files?.[0]; if (f) setAvatar(await toAvatar(f)); }} />
+            </Button>
+            <input ref={file} type="file" accept="image/*" hidden onChange={async (e) => { const f = e.target.files?.[0]; if (f) { try { setAvatar(await toAvatar(f)); setErr(""); } catch { setErr("Couldn't open this photo. Choose another image."); } } }} />
+            {err && <p role="alert">{err}</p>}
             <input className="ob-input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" maxLength={40} />
             <p className="ob-label">How old are you?</p>
             <AgeWheel value={age} onChange={setAge} />
-            <button className="ob-btn" disabled={name.trim().length < 2} onClick={() => setStep(1)}>Continue</button>
+            <Button variant="neutral" className="ob-btn" disabled={name.trim().length < 2} onClick={() => setStep(1)}>Continue</Button>
           </>
         )}
         {step === 1 && (
@@ -132,10 +153,10 @@ export default function OnboardingPage() {
             <p className="ob-sub">We'll tune your bots to fit you.</p>
             <div className="ob-opts">
               {TYPES.map(({ id, t, I }) => (
-                <button key={id} className={`ob-opt ${type === id ? "on" : ""}`} onClick={() => setType(id)}><I size={22} />{t}</button>
+                <Button variant="ghost" key={id} aria-pressed={type === id} className={`ob-opt ${type === id ? "on" : ""}`} onClick={() => setType(id)}><I size={22} />{t}</Button>
               ))}
             </div>
-            <button className="ob-btn" disabled={!type} onClick={() => setStep(2)}>Continue</button>
+            <Button variant="neutral" className="ob-btn" disabled={!type} onClick={() => setStep(2)}>Continue</Button>
           </>
         )}
       </main>}

@@ -36,3 +36,6 @@
 - Automatic bot voice IDs are allocated once and persisted in bots.look.voiceSettings.autoVoiceId; roster changes reuse assignments. Why: adding or deleting bots must not change existing voice identities.
 - Service keys (Cerebras, Browserbase, Composio) live in the server-only provider_api_keys pool, filled by the owner-only Telegram bot; env vars are fallback only. Why: keys rotate without redeploying.
 - Long background tasks run as persisted agent_jobs triggered by a signed self-request to /api/public/ceyo-jobs, with queued leftovers retried by the routines endpoint; no Inngest. Why: free and atomic claim prevents double runs.
+- Telegram key administration reads its bot token through service-role-only Supabase Vault RPCs and calls Telegram directly; never restore connector-gateway transport. Why: the owner requires portable credentials independent of Lovable.
+- First-run setup uses the invoker-rights complete_onboarding RPC with a profile row lock and one transaction. Why: retries cannot create duplicate primary bots or partially finish profiles.
+- Update README.md's current-work and verification sections after every implementation pass, keeping roadmap.md as the active task list. Why: successor agents need an accurate handoff rather than historical completion claims.
